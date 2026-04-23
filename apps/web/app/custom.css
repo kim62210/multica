@@ -186,17 +186,17 @@
     border-right: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-/* Main content canvas: make the sidebar-inset / layout wrappers transparent
- * so the body pattern reads through rather than being masked by a solid
- * --background fill. Glass surfaces inside (cards/popovers) still render
- * over the pattern with their own blur. */
+/* Main content canvas: gently translucent so the body pattern *hints*
+ * through without dominating. ~12% pass-through keeps readability
+ * while proving to the eye that the backdrop is alive. Glass cards
+ * on top still render with their own heavier blur. */
 .dark [data-slot="sidebar-inset"],
 .dark [data-slot="sidebar-wrapper"] {
-    background-color: transparent;
+    background-color: color-mix(in oklab, var(--background) 88%, transparent);
 }
 
 .dark main {
-    background-color: transparent;
+    background-color: color-mix(in oklab, var(--background) 88%, transparent);
 }
 
 /* Inputs: heavy frost + glowing focus */
