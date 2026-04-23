@@ -186,6 +186,19 @@
     border-right: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
+/* Main content canvas: make the sidebar-inset / layout wrappers transparent
+ * so the body pattern reads through rather than being masked by a solid
+ * --background fill. Glass surfaces inside (cards/popovers) still render
+ * over the pattern with their own blur. */
+.dark [data-slot="sidebar-inset"],
+.dark [data-slot="sidebar-wrapper"] {
+    background-color: transparent;
+}
+
+.dark main {
+    background-color: transparent;
+}
+
 /* Inputs: heavy frost + glowing focus */
 .dark input,
 .dark textarea {
@@ -275,20 +288,16 @@
     border-radius: inherit;
     box-sizing: border-box;
     padding: 1.5px;
-    /* Two opposing highlights + a long trailing falloff so a rectangular
-     * button doesn't appear to "race" across its long edges. Arc covers
-     * ~140° per spot which evens out the perceived velocity between the
-     * short and long sides. */
+    /* Single travelling highlight with a long trailing falloff — one head
+     * around the full perimeter per cycle. Keep duration slow enough
+     * (see animation-duration below) that even long edges don't whip. */
     background: conic-gradient(
         from var(--shimmer-angle),
         transparent 0deg,
-        color-mix(in oklab, var(--primary) 90%, white) 25deg,
-        color-mix(in oklab, var(--primary) 70%, transparent) 70deg,
-        transparent 140deg,
-        transparent 180deg,
-        color-mix(in oklab, var(--primary) 75%, transparent) 205deg,
-        color-mix(in oklab, var(--primary) 55%, transparent) 250deg,
-        transparent 320deg,
+        color-mix(in oklab, var(--primary) 95%, white) 20deg,
+        color-mix(in oklab, var(--primary) 70%, transparent) 60deg,
+        color-mix(in oklab, var(--primary) 35%, transparent) 110deg,
+        transparent 160deg,
         transparent 360deg
     );
     -webkit-mask:
@@ -326,7 +335,7 @@
     a[href]
 ):is(:hover, :focus-visible, [data-state="open"], [data-popup-open], [data-active="true"])::before {
     opacity: 1;
-    animation: shimmer-spin 3.6s linear infinite;
+    animation: shimmer-spin 5s linear infinite;
 }
 
 /* Respect reduced motion preference — freeze spin, keep the static red edge */
