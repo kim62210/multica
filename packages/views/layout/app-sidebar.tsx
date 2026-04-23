@@ -542,14 +542,14 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                     <DropdownMenuItem
                       render={
                         <a
-                          href="https://multica.ai/changelog"
+                          href="https://github.com/kim62210"
                           target="_blank"
                           rel="noopener noreferrer"
                         />
                       }
                     >
                       <Sparkles className="h-3.5 w-3.5" />
-                      What&apos;s new
+                      GitHub
                     </DropdownMenuItem>
                     <DropdownMenuItem variant="destructive" onClick={logout}>
                       <LogOut className="h-3.5 w-3.5" />
@@ -737,13 +737,13 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                 </div>
                 <div className="p-1">
                   <a
-                    href="https://multica.ai/changelog"
+                    href="https://github.com/kim62210"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-accent transition-colors cursor-pointer"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
-                    What&apos;s new
+                    GitHub
                   </a>
                   <button
                     onClick={logout}
