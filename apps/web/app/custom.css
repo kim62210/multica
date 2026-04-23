@@ -165,36 +165,52 @@
     z-index: 0;
 }
 
-/* Frosted glass on key shadcn surfaces — heavy blur carries readability at very low alpha.
- * !important to win against utility `backdrop-blur-*` and BaseUI defaults. */
-.dark [data-slot="card"],
-.dark [data-slot="popover-content"],
-.dark [data-slot="dropdown-menu-content"],
-.dark [data-slot="dropdown-menu-sub-content"],
-.dark [data-slot="dialog-content"],
-.dark [data-slot="sheet-content"],
-.dark [data-slot="select-content"],
-.dark [data-slot="command"],
-.dark [data-slot="hover-card-content"],
-.dark [data-slot="tooltip-content"] {
+/* Ambient card surfaces — translucent glass stays (decorative,
+ * in-flow content like dashboard widgets). Blur keeps edge-feel. */
+.dark [data-slot="card"] {
     backdrop-filter: blur(80px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(80px) saturate(180%) !important;
     transform: translateZ(0);
     border-color: color-mix(in oklab, var(--primary) 38%, transparent);
 }
 
-/* Modal / overlay backdrops — blur ONLY. Brightness and scrim stay
- * untouched so the dashboard behind the modal keeps its natural tone
- * and just goes out of focus. */
+/* Floating surfaces — dropdowns, popovers, dialogs, sheets, command palettes.
+ * FULLY OPAQUE: the layer below must be completely hidden. Previously
+ * `--popover` / `--card` tokens carry low alpha (0.18-0.38), so even with
+ * blur(80px) the underlying dashboard content bled through. Force an
+ * opaque background here and the blur is now purely decorative saturation. */
+.dark [data-slot="popover-content"],
+.dark [data-slot="dropdown-menu-content"],
+.dark [data-slot="dropdown-menu-sub-content"],
+.dark [data-slot="dialog-content"],
+.dark [data-slot="alert-dialog-content"],
+.dark [data-slot="sheet-content"],
+.dark [data-slot="drawer-content"],
+.dark [data-slot="select-content"],
+.dark [data-slot="command"],
+.dark [data-slot="hover-card-content"],
+.dark [data-slot="tooltip-content"] {
+    background-color: oklch(0.14 0.02 15) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    transform: translateZ(0);
+    border-color: color-mix(in oklab, var(--primary) 38%, transparent);
+}
+
+/* Modal / dialog overlays — opaque scrim. Prior value was
+ * `background-color: transparent` with blur only, which left dashboard
+ * content visibly peeking through on machines where backdrop-filter is
+ * clamped or defeated by ancestor stacking contexts. Use a near-solid
+ * dark scrim so the view behind is always completely hidden. */
 .dark [data-slot="dialog-overlay"],
 .dark [data-slot="alert-dialog-overlay"],
 .dark [data-slot="sheet-overlay"],
 .dark [data-slot="drawer-overlay"],
 .dark [data-radix-dialog-overlay],
 .dark [data-radix-alert-dialog-overlay] {
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
-    background-color: transparent;
+    background-color: oklch(0.04 0.006 15 / 0.96) !important;
+    backdrop-filter: blur(32px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(140%) !important;
 }
 
 .dark [data-sidebar="sidebar"] {
@@ -203,14 +219,15 @@
     border-right: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-/* Bottom-right chat surface — FAB button + expanded chat window.
- * Heavy blur + forced compositor layer so the backdrop filter actually
- * paints (transform: translateZ(0) promotes the element and the
- * backdrop layer is sampled from everything behind it). */
+/* Bottom-right chat surface — FAB + expanded chat window.
+ * Force opaque background (chat-fab uses `bg-card` alpha 0.18,
+ * chat-window uses `bg-sidebar` alpha 0.24 — both too transparent
+ * for a floating surface that must hide the dashboard underneath). */
 .dark [data-slot="chat-window"],
 .dark [data-slot="chat-fab"] {
-    backdrop-filter: blur(80px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(80px) saturate(180%) !important;
+    background-color: oklch(0.14 0.02 15) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
     transform: translateZ(0);
 }
 
