@@ -101,7 +101,7 @@ export default function RootLayout({
     >
       <body className="h-full overflow-hidden">
         <I18nProvider>
-          <ThemeProvider>
+          <ThemeProvider defaultTheme="dark" enableSystem={false}>
             <WebProviders>
               {children}
             </WebProviders>
