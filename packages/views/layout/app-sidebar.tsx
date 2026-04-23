@@ -79,6 +79,7 @@ import { issueDetailOptions } from "@multica/core/issues/queries";
 import { projectDetailOptions } from "@multica/core/projects/queries";
 import type { PinnedItem } from "@multica/core/types";
 import { useLogout } from "../auth";
+import { useI18n } from "../i18n";
 
 // Stable empty arrays for query defaults. Using an inline `= []` default on
 // `useQuery` creates a new array reference on every render when `data` is
@@ -104,22 +105,22 @@ type NavKey =
   | "skills"
   | "settings";
 
-const personalNav: { key: NavKey; label: string; icon: typeof Inbox }[] = [
-  { key: "inbox", label: "Inbox", icon: Inbox },
-  { key: "myIssues", label: "My Issues", icon: CircleUser },
+const personalNav: { key: NavKey; icon: typeof Inbox }[] = [
+  { key: "inbox", icon: Inbox },
+  { key: "myIssues", icon: CircleUser },
 ];
 
-const workspaceNav: { key: NavKey; label: string; icon: typeof Inbox }[] = [
-  { key: "issues", label: "Issues", icon: ListTodo },
-  { key: "projects", label: "Projects", icon: FolderKanban },
-  { key: "autopilots", label: "Autopilot", icon: Zap },
-  { key: "agents", label: "Agents", icon: Bot },
+const workspaceNav: { key: NavKey; icon: typeof Inbox }[] = [
+  { key: "issues", icon: ListTodo },
+  { key: "projects", icon: FolderKanban },
+  { key: "autopilots", icon: Zap },
+  { key: "agents", icon: Bot },
 ];
 
-const configureNav: { key: NavKey; label: string; icon: typeof Inbox }[] = [
-  { key: "runtimes", label: "Runtimes", icon: Monitor },
-  { key: "skills", label: "Skills", icon: BookOpenText },
-  { key: "settings", label: "Settings", icon: Settings },
+const configureNav: { key: NavKey; icon: typeof Inbox }[] = [
+  { key: "runtimes", icon: Monitor },
+  { key: "skills", icon: BookOpenText },
+  { key: "settings", icon: Settings },
 ];
 
 function DraftDot() {
@@ -149,6 +150,7 @@ function SortablePinItem({
   label: string;
   iconNode: React.ReactNode;
 }) {
+  const { t } = useI18n();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: pin.id });
   const wasDragged = useRef(false);
 
@@ -203,7 +205,7 @@ function SortablePinItem({
           >
             <X className="size-1" />
           </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={4}>Unpin</TooltipContent>
+          <TooltipContent side="top" sideOffset={4}>{t("sidebar.unpin")}</TooltipContent>
         </Tooltip>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -308,6 +310,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }: AppSidebarProps = {}) {
   const { pathname, push } = useNavigation();
+  const { t } = useI18n();
   const user = useAuthStore((s) => s.user);
   const userId = useAuthStore((s) => s.user?.id);
   const logout = useLogout();
@@ -451,7 +454,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      Workspaces
+                      {t("sidebar.workspaces")}
                     </DropdownMenuLabel>
                     {workspaces.map((ws) => (
                       <DropdownMenuItem
@@ -473,7 +476,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                       }
                     >
                       <Plus className="h-3.5 w-3.5" />
-                      Create workspace
+                      {t("sidebar.createWorkspace")}
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   {myInvitations.length > 0 && (
@@ -481,12 +484,12 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                       <DropdownMenuSeparator />
                       <DropdownMenuGroup>
                         <DropdownMenuLabel className="text-xs text-muted-foreground">
-                          Pending invitations
+                          {t("sidebar.pendingInvitations")}
                         </DropdownMenuLabel>
                         {myInvitations.map((inv) => (
                           <div key={inv.id} className="flex items-center gap-2 px-2 py-1.5">
                             <WorkspaceAvatar name={inv.workspace_name ?? "W"} size="sm" />
-                            <span className="flex-1 truncate text-sm">{inv.workspace_name ?? "Workspace"}</span>
+                            <span className="flex-1 truncate text-sm">{inv.workspace_name ?? t("sidebar.workspaceFallback")}</span>
                             <button
                               type="button"
                               className="text-xs px-2 py-0.5 rounded bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
@@ -496,7 +499,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                                 acceptInvitationMut.mutate(inv.id);
                               }}
                             >
-                              Join
+                              {t("sidebar.join")}
                             </button>
                             <button
                               type="button"
@@ -507,7 +510,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                                 declineInvitationMut.mutate(inv.id);
                               }}
                             >
-                              Decline
+                              {t("sidebar.decline")}
                             </button>
                           </div>
                         ))}
@@ -534,7 +537,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                     </DropdownMenuItem>
                     <DropdownMenuItem variant="destructive" onClick={logout}>
                       <LogOut className="h-3.5 w-3.5" />
-                      Log out
+                      {t("sidebar.logOut")}
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                 </DropdownMenuContent>
@@ -556,7 +559,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                   <SquarePen />
                   <DraftDot />
                 </span>
-                <span>New Issue</span>
+                <span>{t("sidebar.newIssue")}</span>
                 <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">C</kbd>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -579,8 +582,8 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                         className="text-muted-foreground hover:not-data-active:bg-sidebar-accent/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground"
                       >
                         <item.icon />
-                        <span>{item.label}</span>
-                        {item.label === "Inbox" && unreadCount > 0 && (
+                        <span>{t(`sidebar.nav.${item.key}`)}</span>
+                        {item.key === "inbox" && unreadCount > 0 && (
                           <span className="ml-auto text-xs">
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
@@ -600,7 +603,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                   render={<CollapsibleTrigger />}
                   className="group/trigger cursor-pointer hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
                 >
-                  <span>Pinned</span>
+                  <span>{t("sidebar.pinned")}</span>
                   <ChevronRight className="!size-3 ml-1 stroke-[2.5] transition-transform duration-200 group-data-[panel-open]/trigger:rotate-90" />
                   <span className="ml-auto text-[10px] text-muted-foreground opacity-0 transition-opacity group-hover/pinned:opacity-100">{localPinned.length}</span>
                 </SidebarGroupLabel>
@@ -629,7 +632,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
           )}
 
           <SidebarGroup>
-            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("sidebar.workspaceSection")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
                 {workspaceNav.map((item) => {
@@ -643,7 +646,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                         className="text-muted-foreground hover:not-data-active:bg-sidebar-accent/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground"
                       >
                         <item.icon />
-                        <span>{item.label}</span>
+                        <span>{t(`sidebar.nav.${item.key}`)}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
@@ -653,7 +656,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel>Configure</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("sidebar.configureSection")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
                 {configureNav.map((item) => {
@@ -667,8 +670,8 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                         className="text-muted-foreground hover:not-data-active:bg-sidebar-accent/70 data-active:bg-sidebar-accent data-active:text-sidebar-accent-foreground"
                       >
                         <item.icon />
-                        <span>{item.label}</span>
-                        {item.label === "Runtimes" && hasRuntimeUpdates && (
+                        <span>{t(`sidebar.nav.${item.key}`)}</span>
+                        {item.key === "runtimes" && hasRuntimeUpdates && (
                           <span className="ml-auto size-1.5 rounded-full bg-destructive" />
                         )}
                       </SidebarMenuButton>
@@ -731,7 +734,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                     className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                   >
                     <LogOut className="h-3.5 w-3.5" />
-                    Log out
+                    {t("sidebar.logOut")}
                   </button>
                 </div>
               </PopoverContent>
