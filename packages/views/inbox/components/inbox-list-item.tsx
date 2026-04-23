@@ -5,19 +5,21 @@ import { ActorAvatar } from "../../common/actor-avatar";
 import { Archive } from "lucide-react";
 import type { InboxItem } from "@multica/core/types";
 import { InboxDetailLabel } from "./inbox-detail-label";
+import { useI18n } from "../../i18n";
 
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
-  const days = Math.floor(hours / 24);
-  return `${days}d`;
+export function useTimeAgo() {
+  const { t } = useI18n();
+  return (dateStr: string): string => {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return t("inbox.time.justNow");
+    if (minutes < 60) return t("inbox.time.minutes", { count: minutes });
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return t("inbox.time.hours", { count: hours });
+    const days = Math.floor(hours / 24);
+    return t("inbox.time.days", { count: days });
+  };
 }
-
-export { timeAgo };
 
 export function InboxListItem({
   item,
@@ -30,6 +32,8 @@ export function InboxListItem({
   onClick: () => void;
   onArchive: () => void;
 }) {
+  const { t } = useI18n();
+  const timeAgo = useTimeAgo();
   return (
     <button
       onClick={onClick}
@@ -58,7 +62,7 @@ export function InboxListItem({
             <span
               role="button"
               tabIndex={-1}
-              title="Archive"
+              title={t("inbox.actions.archive")}
               onClick={(e) => {
                 e.stopPropagation();
                 onArchive();
