@@ -17,7 +17,7 @@ import type { DailyCostData } from "../../utils";
 export function DailyCostChart({ data }: { data: DailyCostData[] }) {
   const { t } = useI18n();
   const costChartConfig = {
-    cost: { label: t("runtimes.charts.cost"), color: "hsl(var(--chart-1))" },
+    cost: { label: t("runtimes.charts.cost"), color: "var(--chart-1)" },
   } satisfies ChartConfig;
 
   if (data.every((d) => d.cost === 0)) return null;

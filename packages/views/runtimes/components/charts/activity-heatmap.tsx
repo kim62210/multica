@@ -9,11 +9,11 @@ const CELL_GAP = 2;
 
 function getHeatmapColor(level: number): string {
   const colors = [
-    "var(--color-muted, hsl(var(--muted)))",
-    "hsl(var(--chart-3) / 0.3)",
-    "hsl(var(--chart-3) / 0.5)",
-    "hsl(var(--chart-3) / 0.75)",
-    "hsl(var(--chart-3) / 1)",
+    "var(--color-muted, var(--muted))",
+    "color-mix(in oklab, var(--chart-3) 30%, transparent)",
+    "color-mix(in oklab, var(--chart-3) 50%, transparent)",
+    "color-mix(in oklab, var(--chart-3) 75%, transparent)",
+    "color-mix(in oklab, var(--chart-3) 100%, transparent)",
   ];
   return colors[level] ?? colors[0]!;
 }

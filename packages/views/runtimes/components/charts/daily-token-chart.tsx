@@ -96,7 +96,7 @@ function TokenTooltipContent({
 export function DailyTokenChart({ data }: { data: DailyTokenData[] }) {
   const { t } = useI18n();
   const tokenChartConfig = {
-    total: { label: t("runtimes.charts.total"), color: "hsl(var(--chart-1))" },
+    total: { label: t("runtimes.charts.total"), color: "var(--chart-1)" },
   } satisfies ChartConfig;
   const tooltipLabels = {
     input: t("runtimes.usage.input"),

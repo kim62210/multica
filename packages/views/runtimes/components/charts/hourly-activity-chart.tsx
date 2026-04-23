@@ -20,7 +20,7 @@ import { useI18n } from "../../../i18n";
 export function HourlyActivityChart({ runtimeId }: { runtimeId: string }) {
   const { t } = useI18n();
   const hourlyChartConfig = {
-    count: { label: t("runtimes.charts.tasks"), color: "hsl(var(--chart-2))" },
+    count: { label: t("runtimes.charts.tasks"), color: "var(--chart-2)" },
   } satisfies ChartConfig;
   const [data, setData] = useState<RuntimeHourlyActivity[]>([]);
   const [loading, setLoading] = useState(true);
