@@ -18,8 +18,10 @@ import type { UpdateIssueRequest } from "@multica/core/types";
 import { useIssueSelectionStore } from "@multica/core/issues/stores/selection-store";
 import { useBatchUpdateIssues, useBatchDeleteIssues } from "@multica/core/issues/mutations";
 import { StatusPicker, PriorityPicker, AssigneePicker } from "./pickers";
+import { useI18n } from "../../i18n";
 
 export function BatchActionToolbar() {
+  const { t } = useI18n();
   const selectedIds = useIssueSelectionStore((s) => s.selectedIds);
   const clear = useIssueSelectionStore((s) => s.clear);
   const count = selectedIds.size;
@@ -39,9 +41,13 @@ export function BatchActionToolbar() {
   const handleBatchUpdate = async (updates: Partial<UpdateIssueRequest>) => {
     try {
       await batchUpdate.mutateAsync({ ids, updates });
-      toast.success(`Updated ${count} issue${count > 1 ? "s" : ""}`);
+      toast.success(
+        count > 1
+          ? t("issueDetail.batch.updatedPlural", { count })
+          : t("issueDetail.batch.updatedSingle", { count }),
+      );
     } catch {
-      toast.error("Failed to update issues");
+      toast.error(t("issueDetail.batch.updateError"));
     }
   };
 
@@ -49,9 +55,13 @@ export function BatchActionToolbar() {
     try {
       await batchDelete.mutateAsync(ids);
       clear();
-      toast.success(`Deleted ${count} issue${count > 1 ? "s" : ""}`);
+      toast.success(
+        count > 1
+          ? t("issueDetail.batch.deletedPlural", { count })
+          : t("issueDetail.batch.deletedSingle", { count }),
+      );
     } catch {
-      toast.error("Failed to delete issues");
+      toast.error(t("issueDetail.batch.deleteError"));
     } finally {
       setDeleteOpen(false);
     }
@@ -61,7 +71,7 @@ export function BatchActionToolbar() {
     <>
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 rounded-lg border bg-background px-2 py-1.5 shadow-lg">
         <div className="flex items-center gap-1.5 pl-1 pr-2 border-r mr-1">
-          <span className="text-sm font-medium">{count} selected</span>
+          <span className="text-sm font-medium">{t("issueDetail.batch.selected", { count })}</span>
           <button
             type="button"
             onClick={clear}
@@ -78,7 +88,7 @@ export function BatchActionToolbar() {
           open={statusOpen}
           onOpenChange={setStatusOpen}
           triggerRender={<Button variant="ghost" size="sm" disabled={loading} />}
-          trigger="Status"
+          trigger={t("issueDetail.batch.status")}
           align="center"
         />
 
@@ -89,7 +99,7 @@ export function BatchActionToolbar() {
           open={priorityOpen}
           onOpenChange={setPriorityOpen}
           triggerRender={<Button variant="ghost" size="sm" disabled={loading} />}
-          trigger="Priority"
+          trigger={t("issueDetail.batch.priority")}
           align="center"
         />
 
@@ -101,7 +111,7 @@ export function BatchActionToolbar() {
           open={assigneeOpen}
           onOpenChange={setAssigneeOpen}
           triggerRender={<Button variant="ghost" size="sm" disabled={loading} />}
-          trigger="Assignee"
+          trigger={t("issueDetail.batch.assignee")}
           align="center"
         />
 
@@ -114,7 +124,7 @@ export function BatchActionToolbar() {
           className="text-destructive hover:text-destructive"
         >
           <Trash2 className="size-3.5 mr-1" />
-          Delete
+          {t("issueDetail.batch.delete")}
         </Button>
       </div>
 
@@ -122,20 +132,23 @@ export function BatchActionToolbar() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Delete {count} issue{count > 1 ? "s" : ""}?
+              {count > 1
+                ? t("issueDetail.batch.deleteDialogTitlePlural", { count })
+                : t("issueDetail.batch.deleteDialogTitleSingle", { count })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              selected issue{count > 1 ? "s" : ""} and all associated data.
+              {count > 1
+                ? t("issueDetail.batch.deleteDialogDescPlural")
+                : t("issueDetail.batch.deleteDialogDescSingle")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("issueDetail.batch.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleBatchDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {t("issueDetail.batch.delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -33,6 +33,9 @@ import { ActorAvatar } from "../../common/actor-avatar";
 import { api } from "@multica/core/api";
 import type { AgentTask, Agent, AgentRuntime } from "@multica/core/types/agent";
 import { redactSecrets } from "../utils/redact";
+import { useI18n } from "../../i18n";
+
+type TFn = (key: string, values?: Record<string, string | number>) => string;
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -85,20 +88,20 @@ const colorClasses: Record<EventColor, { bg: string; bgActive: string; label: st
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function getEventLabel(item: TimelineItem): string {
+function getEventLabel(item: TimelineItem, t: TFn): string {
   switch (item.type) {
     case "text":
-      return "Agent";
+      return t("issueDetail.transcript.event.agent");
     case "thinking":
-      return "Thinking";
+      return t("issueDetail.transcript.event.thinking");
     case "tool_use":
-      return item.tool ?? "Tool";
+      return item.tool ?? t("issueDetail.transcript.event.tool");
     case "tool_result":
-      return item.tool ? `${item.tool}` : "Result";
+      return item.tool ? `${item.tool}` : t("issueDetail.transcript.event.result");
     case "error":
-      return "Error";
+      return t("issueDetail.transcript.event.error");
     default:
-      return "Event";
+      return t("issueDetail.transcript.event.event");
   }
 }
 
@@ -172,6 +175,7 @@ export function AgentTranscriptDialog({
   agentName,
   isLive = false,
 }: AgentTranscriptDialogProps) {
+  const { t } = useI18n();
   const [selectedSeq, setSelectedSeq] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState("");
   const [copied, setCopied] = useState(false);
@@ -193,12 +197,12 @@ export function AgentTranscriptDialog({
       } else {
         const value = item.type;
         if (!options.has(value)) {
-          options.set(value, getEventLabel(item));
+          options.set(value, getEventLabel(item, t));
         }
       }
     }
     return Array.from(options.entries()).sort((a, b) => a[1].localeCompare(b[1]));
-  }, [items]);
+  }, [items, t]);
 
   // Resolve filter key for each item — mirrors filterOptions derivation exactly
   const itemFilterKey = (item: TimelineItem) =>
@@ -253,7 +257,7 @@ export function AgentTranscriptDialog({
   const handleCopyAll = useCallback(() => {
     const text = filteredItems
       .map((item) => {
-        const label = getEventLabel(item);
+        const label = getEventLabel(item, t);
         const summary = getEventSummary(item);
         return `[${label}] ${summary}`;
       })
@@ -262,7 +266,7 @@ export function AgentTranscriptDialog({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
-  }, [filteredItems]);
+  }, [filteredItems, t]);
 
   // Toggle tool filter
   const toggleTool = useCallback((tool: string) => {
@@ -292,17 +296,17 @@ export function AgentTranscriptDialog({
   const statusBadge = isLive ? (
     <span className="inline-flex items-center gap-1 rounded-full bg-info/15 px-2 py-0.5 text-xs font-medium text-info">
       <Loader2 className="h-3 w-3 animate-spin" />
-      Running
+      {t("issueDetail.transcript.running")}
     </span>
   ) : task.status === "completed" ? (
     <span className="inline-flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-xs font-medium text-success">
       <CheckCircle2 className="h-3 w-3" />
-      Completed
+      {t("issueDetail.transcript.completed")}
     </span>
   ) : task.status === "failed" ? (
     <span className="inline-flex items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-medium text-destructive">
       <XCircle className="h-3 w-3" />
-      Failed
+      {t("issueDetail.transcript.failed")}
     </span>
   ) : (
     <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground capitalize">
@@ -316,7 +320,7 @@ export function AgentTranscriptDialog({
         className="!max-w-4xl !w-[calc(100vw-4rem)] !max-h-[calc(100vh-4rem)] !h-[calc(100vh-4rem)] flex flex-col !p-0 !gap-0 overflow-hidden"
         showCloseButton={false}
       >
-        <DialogTitle className="sr-only">Agent Execution Transcript</DialogTitle>
+        <DialogTitle className="sr-only">{t("issueDetail.transcript.title")}</DialogTitle>
 
         {/* ── Header ─────────────────────────────────────────────── */}
         <div className="border-b px-4 py-3 shrink-0 space-y-2">
@@ -347,7 +351,7 @@ export function AgentTranscriptDialog({
                     )}
                   >
                     <Filter className="h-3 w-3" />
-                    Filter
+                    {t("issueDetail.transcript.filter")}
                     {selectedTools.size > 0 && (
                       <span className="ml-0.5 rounded-full bg-blue-500/20 px-1.5 py-0 text-[10px] font-medium">
                         {selectedTools.size}
@@ -368,7 +372,7 @@ export function AgentTranscriptDialog({
                       <>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={clearFilters} className="text-muted-foreground">
-                          Clear filters
+                          {t("issueDetail.transcript.clearFilters")}
                         </DropdownMenuItem>
                       </>
                     )}
@@ -380,7 +384,11 @@ export function AgentTranscriptDialog({
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
                 {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                {copied ? "Copied" : selectedTools.size > 0 ? "Copy filtered" : "Copy all"}
+                {copied
+                  ? t("issueDetail.transcript.copied")
+                  : selectedTools.size > 0
+                    ? t("issueDetail.transcript.copyFiltered")
+                    : t("issueDetail.transcript.copyAll")}
               </button>
               <button
                 onClick={() => onOpenChange(false)}
@@ -426,10 +434,12 @@ export function AgentTranscriptDialog({
 
             {/* Event counts */}
             {toolCount > 0 && (
-              <MetadataChip>{toolCount} tool calls</MetadataChip>
+              <MetadataChip>{t("issueDetail.transcript.toolCalls", { count: toolCount })}</MetadataChip>
             )}
             <MetadataChip>
-              {selectedTools.size > 0 ? `${filteredItems.length} of ${items.length}` : items.length} events
+              {selectedTools.size > 0
+                ? t("issueDetail.transcript.filteredEvents", { filtered: filteredItems.length, total: items.length })
+                : t("issueDetail.transcript.events", { count: items.length })}
             </MetadataChip>
 
             {/* Created time */}
@@ -453,6 +463,7 @@ export function AgentTranscriptDialog({
               items={filteredItems}
               selectedSeq={selectedSeq}
               onSegmentClick={handleSegmentClick}
+              t={t}
             />
           </div>
         )}
@@ -467,10 +478,10 @@ export function AgentTranscriptDialog({
               {isLive ? (
                 <div className="flex items-center gap-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Waiting for events...
+                  {t("issueDetail.transcript.waitingEvents")}
                 </div>
               ) : (
-                "No execution data recorded."
+                t("issueDetail.transcript.noExecution")
               )}
             </div>
           ) : (
@@ -484,6 +495,7 @@ export function AgentTranscriptDialog({
                   }}
                   item={item}
                   isSelected={selectedSeq === item.seq}
+                  t={t}
                 />
               ))}
             </div>
@@ -521,10 +533,12 @@ function TimelineBar({
   items,
   selectedSeq,
   onSegmentClick,
+  t,
 }: {
   items: TimelineItem[];
   selectedSeq: number | null;
   onSegmentClick: (seq: number) => void;
+  t: TFn;
 }) {
   const segments: { startIdx: number; endIdx: number; color: EventColor; count: number }[] = [];
   let currentColor: EventColor | null = null;
@@ -562,11 +576,11 @@ function TimelineBar({
             )}
             style={{ width: `${Math.max(widthPercent, 0.5)}%` }}
             onClick={() => onSegmentClick(items[seg.startIdx]!.seq)}
-            title={`${getEventLabel(items[seg.startIdx]!)}${seg.count > 1 ? ` (+${seg.count - 1} more)` : ""}`}
+            title={`${getEventLabel(items[seg.startIdx]!, t)}${seg.count > 1 ? ` (+${seg.count - 1} more)` : ""}`}
           >
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10 pointer-events-none">
               <div className="rounded bg-popover border px-2 py-1 text-[10px] text-popover-foreground shadow-md whitespace-nowrap">
-                {getEventLabel(items[seg.startIdx]!)}
+                {getEventLabel(items[seg.startIdx]!, t)}
                 {seg.count > 1 && <span className="text-muted-foreground ml-1">+{seg.count - 1}</span>}
               </div>
             </div>
@@ -582,16 +596,18 @@ function TimelineBar({
 interface TranscriptEventRowProps {
   item: TimelineItem;
   isSelected: boolean;
+  t: TFn;
 }
 
 const TranscriptEventRow = ({
   ref,
   item,
   isSelected,
+  t,
 }: TranscriptEventRowProps & { ref?: React.Ref<HTMLDivElement> }) => {
   const [expanded, setExpanded] = useState(false);
   const color = getEventColor(item);
-  const label = getEventLabel(item);
+  const label = getEventLabel(item, t);
   const summary = getEventSummary(item);
 
   const hasDetail =
@@ -641,7 +657,7 @@ const TranscriptEventRow = ({
                   )}
                 />
               )}
-              <span className="truncate">{summary || "(empty)"}</span>
+              <span className="truncate">{summary || t("issueDetail.transcript.empty")}</span>
             </div>
           </CollapsibleTrigger>
 

@@ -9,6 +9,7 @@ import { ActorAvatar } from "../../common/actor-avatar";
 import { useFileUpload } from "@multica/core/hooks/use-file-upload";
 import { api } from "@multica/core/api";
 import { cn } from "@multica/ui/lib/utils";
+import { useI18n } from "../../i18n";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -29,12 +30,14 @@ interface ReplyInputProps {
 
 function ReplyInput({
   issueId,
-  placeholder = "Leave a reply...",
+  placeholder,
   avatarType,
   avatarId,
   onSubmit,
   size = "default",
 }: ReplyInputProps) {
+  const { t } = useI18n();
+  const resolvedPlaceholder = placeholder ?? t("issueDetail.reply.placeholder");
   const editorRef = useRef<ContentEditorRef>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const [isEmpty, setIsEmpty] = useState(true);
@@ -109,7 +112,7 @@ function ReplyInput({
           <div ref={measureRef}>
             <ContentEditor
               ref={editorRef}
-              placeholder={placeholder}
+              placeholder={resolvedPlaceholder}
               onUpdate={(md) => setIsEmpty(!md.trim())}
               onSubmit={handleSubmit}
               onUploadFile={handleUpload}
@@ -134,7 +137,7 @@ function ReplyInput({
                 </button>
               }
             />
-            <TooltipContent side="top">{isExpanded ? "Collapse" : "Expand"}</TooltipContent>
+            <TooltipContent side="top">{isExpanded ? t("issueDetail.comment.collapse") : t("issueDetail.comment.expand")}</TooltipContent>
           </Tooltip>
           <FileUploadButton
             size="sm"
