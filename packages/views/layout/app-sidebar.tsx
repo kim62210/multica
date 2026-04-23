@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@multica/ui/lib/utils";
 import { AppLink, useNavigation } from "../navigation";
+import { HelpLauncher } from "./help-launcher";
 import {
   DndContext,
   PointerSensor,
@@ -28,7 +29,6 @@ import {
   SquarePen,
   CircleUser,
   FolderKanban,
-  Sparkles,
   X,
   Zap,
 } from "lucide-react";
@@ -41,11 +41,11 @@ import { useIssueDraftStore } from "@multica/core/issues/stores/draft-store";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
-  SidebarFooter,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -60,11 +60,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@multica/ui/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@multica/ui/components/ui/popover";
 import { useAuthStore } from "@multica/core/auth";
 import { useCurrentWorkspace, useWorkspacePaths, paths } from "@multica/core/paths";
 import { workspaceListOptions, myInvitationListOptions, workspaceKeys } from "@multica/core/workspace/queries";
@@ -457,16 +452,27 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                   }
                 />
                 <DropdownMenuContent
-                  className="w-auto"
+                  className="w-auto min-w-56"
                   align="start"
                   side="bottom"
                   sideOffset={4}
                 >
-                  <DropdownMenuGroup>
-                    <DropdownMenuLabel className="text-xs text-muted-foreground">
-                      {user?.email}
-                    </DropdownMenuLabel>
-                  </DropdownMenuGroup>
+                  <div className="flex items-center gap-2.5 px-2 py-1.5">
+                    <ActorAvatar
+                      name={user?.name ?? ""}
+                      initials={(user?.name ?? "U").charAt(0).toUpperCase()}
+                      avatarUrl={user?.avatar_url}
+                      size={32}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium leading-tight">
+                        {user?.name}
+                      </p>
+                      <p className="truncate text-xs text-muted-foreground leading-tight">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuLabel className="text-xs text-muted-foreground">
@@ -700,7 +706,10 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
         </SidebarContent>
 
         <SidebarFooter className="p-2">
-          <div className="border-t pt-2">
+          <div className="border-t pt-2 space-y-2">
+            <div className="flex justify-end">
+              <HelpLauncher />
+            </div>
             <Popover>
               <PopoverTrigger className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-accent transition-colors cursor-pointer">
                 <ActorAvatar
