@@ -128,10 +128,10 @@
             oklch(0.38 0.22 220 / 0.3),
             transparent 55%),
         linear-gradient(180deg,
-            oklch(0.09 0.02 270 / 0.78),
-            oklch(0.12 0.02 270 / 0.82)),
+            oklch(0.08 0.015 15 / 0.32),
+            oklch(0.10 0.018 15 / 0.42)),
         url("/pattern.png") center center / cover no-repeat,
-        oklch(0.08 0.01 270);
+        oklch(0.06 0.008 15);
     background-attachment: fixed;
     min-height: 100vh;
 }
@@ -222,18 +222,51 @@
     to { --shimmer-angle: 360deg; }
 }
 
-.dark button[data-slot="button"],
-.dark [role="button"],
-.dark [data-slot="menu-button"],
-.dark a[class*="button"] {
+/* Every interactive surface that should carry the hover laser ring.
+ * Covers shadcn primitives + raw semantic roles + rows/links/menu items
+ * that the views package renders without a dedicated data-slot. */
+.dark :is(
+    button[data-slot="button"],
+    button:not([data-slot]),
+    [role="button"],
+    [role="menuitem"],
+    [role="menuitemradio"],
+    [role="menuitemcheckbox"],
+    [role="option"],
+    [role="tab"],
+    [role="row"][tabindex],
+    [data-slot="menu-button"],
+    [data-slot="dropdown-menu-item"],
+    [data-slot="command-item"],
+    [data-slot="select-item"],
+    [data-slot="tabs-trigger"],
+    [data-sidebar="menu-button"],
+    [data-list-item],
+    a[href]
+) {
     position: relative;
     isolation: isolate;
 }
 
-.dark button[data-slot="button"]::before,
-.dark [role="button"]::before,
-.dark [data-slot="menu-button"]::before,
-.dark a[class*="button"]::before {
+.dark :is(
+    button[data-slot="button"],
+    button:not([data-slot]),
+    [role="button"],
+    [role="menuitem"],
+    [role="menuitemradio"],
+    [role="menuitemcheckbox"],
+    [role="option"],
+    [role="tab"],
+    [role="row"][tabindex],
+    [data-slot="menu-button"],
+    [data-slot="dropdown-menu-item"],
+    [data-slot="command-item"],
+    [data-slot="select-item"],
+    [data-slot="tabs-trigger"],
+    [data-sidebar="menu-button"],
+    [data-list-item],
+    a[href]
+)::before {
     content: "";
     position: absolute;
     inset: 0;
@@ -265,29 +298,41 @@
 }
 
 /* Hover / focus / open — shimmer ring appears and spins */
-.dark button[data-slot="button"]:hover::before,
-.dark button[data-slot="button"]:focus-visible::before,
-.dark button[data-slot="button"][data-state="open"]::before,
-.dark [role="button"]:hover::before,
-.dark [role="button"]:focus-visible::before,
-.dark [data-slot="menu-button"]:hover::before,
-.dark [data-slot="menu-button"][data-popup-open]::before,
-.dark a[class*="button"]:hover::before,
-.dark a[class*="button"]:focus-visible::before {
+.dark :is(
+    button[data-slot="button"],
+    button:not([data-slot]),
+    [role="button"],
+    [role="menuitem"],
+    [role="menuitemradio"],
+    [role="menuitemcheckbox"],
+    [role="option"],
+    [role="tab"],
+    [role="row"][tabindex],
+    [data-slot="menu-button"],
+    [data-slot="dropdown-menu-item"],
+    [data-slot="command-item"],
+    [data-slot="select-item"],
+    [data-slot="tabs-trigger"],
+    [data-sidebar="menu-button"],
+    [data-list-item],
+    a[href]
+):is(:hover, :focus-visible, [data-state="open"], [data-popup-open], [data-active="true"])::before {
     opacity: 1;
     animation: shimmer-spin 2s linear infinite;
 }
 
 /* Respect reduced motion preference — freeze spin, keep the static red edge */
 @media (prefers-reduced-motion: reduce) {
-    .dark button[data-slot="button"]:hover::before,
-    .dark button[data-slot="button"]:focus-visible::before,
-    .dark [role="button"]:hover::before,
-    .dark [role="button"]:focus-visible::before,
-    .dark [data-slot="menu-button"]:hover::before,
-    .dark [data-slot="menu-button"][data-popup-open]::before,
-    .dark a[class*="button"]:hover::before,
-    .dark a[class*="button"]:focus-visible::before {
+    .dark :is(
+        button[data-slot="button"],
+        button:not([data-slot]),
+        [role="button"],
+        [role="menuitem"],
+        [role="option"],
+        [data-slot="menu-button"],
+        [data-sidebar="menu-button"],
+        a[href]
+    ):hover::before {
         animation: none;
     }
 }
