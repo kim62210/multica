@@ -333,7 +333,7 @@ export function ChatWindow() {
   };
 
   return (
-    <div ref={windowRef} className={containerClass} style={containerStyle}>
+    <div ref={windowRef} data-slot="chat-window" className={containerClass} style={containerStyle}>
       <ChatResizeHandles onDragStart={startDrag} />
       {/* Header — ⊕ new + session dropdown | window tools */}
       <div className="flex items-center justify-between border-b px-4 py-2.5 gap-2">
