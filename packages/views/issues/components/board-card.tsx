@@ -20,6 +20,7 @@ import { PRIORITY_CONFIG } from "@multica/core/issues/config";
 import { useViewStore } from "@multica/core/issues/stores/view-store-context";
 import { ProgressRing } from "./progress-ring";
 import type { ChildProgress } from "./list-row";
+import { useI18n } from "../../i18n";
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString("en-US", {
@@ -50,8 +51,10 @@ export const BoardCardContent = memo(function BoardCardContent({
   editable?: boolean;
   childProgress?: ChildProgress;
 }) {
+  const { t } = useI18n();
   const storeProperties = useViewStore((s) => s.cardProperties);
   const priorityCfg = PRIORITY_CONFIG[issue.priority];
+  const priorityLabel = t(`issues.priority.${issue.priority}`) || priorityCfg.label;
   const wsId = useWorkspaceId();
   const { data: projects = [] } = useQuery({
     ...projectListOptions(wsId),
@@ -64,10 +67,10 @@ export const BoardCardContent = memo(function BoardCardContent({
     (updates: Partial<UpdateIssueRequest>) => {
       updateIssueMutation.mutate(
         { id: issue.id, ...updates },
-        { onError: () => toast.error("Failed to update issue") },
+        { onError: () => toast.error(t("issues.board.toastFailedUpdate")) },
       );
     },
-    [issue.id, updateIssueMutation],
+    [issue.id, updateIssueMutation, t],
   );
 
   const showPriority = storeProperties.priority;
@@ -149,7 +152,7 @@ export const BoardCardContent = memo(function BoardCardContent({
                   trigger={
                     <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${priorityCfg.badgeBg} ${priorityCfg.badgeText}`}>
                       <PriorityIcon priority={issue.priority} className="h-3 w-3" inheritColor />
-                      {priorityCfg.label}
+                      {priorityLabel}
                     </span>
                   }
                 />
@@ -157,7 +160,7 @@ export const BoardCardContent = memo(function BoardCardContent({
             ) : (
               <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${priorityCfg.badgeBg} ${priorityCfg.badgeText}`}>
                 <PriorityIcon priority={issue.priority} className="h-3 w-3" inheritColor />
-                {priorityCfg.label}
+                {priorityLabel}
               </span>
             ))}
           {showDueDate && (

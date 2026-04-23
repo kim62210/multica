@@ -58,7 +58,7 @@ export function BoardColumn({
         <div className="flex items-center gap-2">
           <span className={`inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-xs font-semibold ${cfg.badgeBg} ${cfg.badgeText}`}>
             <StatusIcon status={status} className="h-3 w-3" inheritColor />
-            {cfg.label}
+            {t(`issues.status.${status}`) || cfg.label}
           </span>
           <span className="text-xs text-muted-foreground">
             {totalCount ?? issueIds.length}

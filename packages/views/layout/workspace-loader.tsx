@@ -1,6 +1,7 @@
 "use client";
 
 import { MulticaIcon } from "@multica/ui/components/common/multica-icon";
+import { useI18n } from "../i18n";
 
 /**
  * Full-screen workspace loader. Renders IN PLACE OF the dashboard during:
@@ -13,6 +14,7 @@ import { MulticaIcon } from "@multica/ui/components/common/multica-icon";
  * workspace have been freshly fetched.
  */
 export function WorkspaceLoader({ name }: { name?: string | null }) {
+  const { t } = useI18n();
   return (
     <div
       className="flex h-svh w-full items-center justify-center bg-background"
@@ -23,10 +25,10 @@ export function WorkspaceLoader({ name }: { name?: string | null }) {
         <MulticaIcon className="size-8 animate-pulse" />
         {name ? (
           <p className="text-sm text-muted-foreground">
-            Loading <span className="font-medium text-foreground">{name}</span>…
+            {t("layout.workspaceLoader.loadingName", { name })}
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground">Loading workspace…</p>
+          <p className="text-sm text-muted-foreground">{t("layout.workspaceLoader.loading")}</p>
         )}
       </div>
     </div>

@@ -15,6 +15,7 @@ import {
   PickerSection,
   PickerEmpty,
 } from "./property-picker";
+import { useI18n } from "../../../i18n";
 
 export function canAssignAgent(agent: Agent, userId: string | undefined, memberRole: string | undefined): boolean {
   if (agent.visibility !== "private") return true;
@@ -42,6 +43,7 @@ export function AssigneePicker({
   onOpenChange?: (v: boolean) => void;
   align?: "start" | "center" | "end";
 }) {
+  const { t } = useI18n();
   const [internalOpen, setInternalOpen] = useState(false);
   const open = controlledOpen ?? internalOpen;
   const setOpen = controlledOnOpenChange ?? setInternalOpen;
@@ -81,7 +83,7 @@ export function AssigneePicker({
   const triggerLabel =
     assigneeType && assigneeId
       ? getActorName(assigneeType, assigneeId)
-      : "Unassigned";
+      : t("issues.picker.assignee.unassigned");
 
   return (
     <PropertyPicker
@@ -93,7 +95,7 @@ export function AssigneePicker({
       width="w-52"
       align={align}
       searchable
-      searchPlaceholder="Assign to..."
+      searchPlaceholder={t("issues.picker.assignee.assignTo")}
       onSearchChange={setFilter}
       triggerRender={triggerRender}
       trigger={
@@ -103,7 +105,7 @@ export function AssigneePicker({
             <span className="truncate">{triggerLabel}</span>
           </>
         ) : (
-          <span className="text-muted-foreground">Unassigned</span>
+          <span className="text-muted-foreground">{t("issues.picker.assignee.unassigned")}</span>
         )
       }
     >
@@ -117,13 +119,13 @@ export function AssigneePicker({
           }}
         >
           <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-muted-foreground">Unassigned</span>
+          <span className="text-muted-foreground">{t("issues.picker.assignee.unassigned")}</span>
         </PickerItem>
       )}
 
       {/* Members */}
       {filteredMembers.length > 0 && (
-        <PickerSection label="Members">
+        <PickerSection label={t("issues.picker.assignee.members")}>
           {filteredMembers.map((m) => (
             <PickerItem
               key={m.user_id}
@@ -145,7 +147,7 @@ export function AssigneePicker({
 
       {/* Agents */}
       {filteredAgents.length > 0 && (
-        <PickerSection label="Agents">
+        <PickerSection label={t("issues.picker.assignee.agents")}>
           {filteredAgents.map((a) => {
             const allowed = canAssignAgent(a, user?.id, memberRole);
             return (

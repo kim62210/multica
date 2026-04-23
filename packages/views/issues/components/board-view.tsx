@@ -35,6 +35,7 @@ import { BoardColumn } from "./board-column";
 import { BoardCardContent } from "./board-card";
 import { InfiniteScrollSentinel } from "./infinite-scroll-sentinel";
 import type { ChildProgress } from "./list-row";
+import { useI18n } from "../../i18n";
 
 const COLUMN_IDS = new Set<string>(ALL_STATUSES);
 
@@ -350,11 +351,12 @@ function HiddenColumnsPanel({
   hiddenStatuses: IssueStatus[];
   myIssuesOpts?: { scope: string; filter: MyIssuesFilter };
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex w-[240px] shrink-0 flex-col">
       <div className="mb-2 flex items-center gap-2 px-1">
         <span className="text-sm font-medium text-muted-foreground">
-          Hidden columns
+          {t("issues.board.hiddenColumns")}
         </span>
       </div>
       <div className="flex-1 space-y-0.5">
@@ -377,6 +379,7 @@ function HiddenColumnRow({
   status: IssueStatus;
   myIssuesOpts?: { scope: string; filter: MyIssuesFilter };
 }) {
+  const { t } = useI18n();
   const cfg = STATUS_CONFIG[status];
   const viewStoreApi = useViewStoreApi();
   const { total } = useLoadMoreByStatus(status, myIssuesOpts);
@@ -384,7 +387,7 @@ function HiddenColumnRow({
     <div className="flex items-center justify-between rounded-lg px-2.5 py-2 hover:bg-muted/50">
       <div className="flex items-center gap-2">
         <StatusIcon status={status} className="h-3.5 w-3.5" />
-        <span className="text-sm">{cfg.label}</span>
+        <span className="text-sm">{t(`issues.status.${status}`) || cfg.label}</span>
       </div>
       <div className="flex items-center gap-1.5">
         <span className="text-xs text-muted-foreground">{total}</span>
@@ -405,7 +408,7 @@ function HiddenColumnRow({
               onClick={() => viewStoreApi.getState().showStatus(status)}
             >
               <Eye className="size-3.5" />
-              Show column
+              {t("issues.board.showColumn")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

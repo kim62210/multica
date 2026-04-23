@@ -16,8 +16,10 @@ import {
 } from "@multica/ui/components/ui/card";
 import { Button } from "@multica/ui/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "@multica/views/i18n";
 
 function CallbackContent() {
+  const { t } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
   const qc = useQueryClient();
@@ -28,13 +30,13 @@ function CallbackContent() {
   useEffect(() => {
     const code = searchParams.get("code");
     if (!code) {
-      setError("Missing authorization code");
+      setError(t("authCallback.missingCode"));
       return;
     }
 
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      setError(errorParam === "access_denied" ? "Access denied" : errorParam);
+      setError(errorParam === "access_denied" ? t("authCallback.accessDenied") : errorParam);
       return;
     }
 
@@ -57,7 +59,7 @@ function CallbackContent() {
           window.location.href = `multica://auth/callback?token=${encodeURIComponent(token)}`;
         })
         .catch((err) => {
-          setError(err instanceof Error ? err.message : "Login failed");
+          setError(err instanceof Error ? err.message : t("authCallback.loginFailed"));
         });
     } else {
       // Normal web flow
@@ -75,20 +77,19 @@ function CallbackContent() {
           );
         })
         .catch((err) => {
-          setError(err instanceof Error ? err.message : "Login failed");
+          setError(err instanceof Error ? err.message : t("authCallback.loginFailed"));
         });
     }
-  }, [searchParams, loginWithGoogle, router, qc]);
+  }, [searchParams, loginWithGoogle, router, qc, t]);
 
   if (desktopToken) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Opening Multica</CardTitle>
+            <CardTitle className="text-2xl">{t("authCallback.openingTitle")}</CardTitle>
             <CardDescription>
-              You should see a prompt to open the Multica desktop app. If
-              nothing happens, click the button below.
+              {t("authCallback.openingBody")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -98,7 +99,7 @@ function CallbackContent() {
                 window.location.href = `multica://auth/callback?token=${encodeURIComponent(desktopToken)}`;
               }}
             >
-              Open Multica Desktop
+              {t("authCallback.openButton")}
             </Button>
           </CardContent>
         </Card>
@@ -111,12 +112,12 @@ function CallbackContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Login Failed</CardTitle>
+            <CardTitle className="text-2xl">{t("authCallback.loginFailedTitle")}</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <a href={paths.login()} className="text-primary underline-offset-4 hover:underline">
-              Back to login
+              {t("authCallback.backToLogin")}
             </a>
           </CardContent>
         </Card>
@@ -128,8 +129,8 @@ function CallbackContent() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Signing in...</CardTitle>
-          <CardDescription>Please wait while we complete your login</CardDescription>
+          <CardTitle className="text-2xl">{t("authCallback.signingInTitle")}</CardTitle>
+          <CardDescription>{t("authCallback.signingInBody")}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
