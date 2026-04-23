@@ -244,15 +244,17 @@
 .dark a[class*="button"]::before {
     content: "";
     position: absolute;
-    inset: -1.5px;
+    inset: 0;
+    /* inherit the exact border-radius of the parent element so the ring
+     * traces the button edge — works for rounded, pill, and square shapes alike */
     border-radius: inherit;
     padding: 1.5px;
     background: conic-gradient(
         from var(--shimmer-angle),
         transparent 0deg,
-        color-mix(in oklab, var(--primary) 90%, white) 18deg,
-        color-mix(in oklab, var(--primary) 70%, transparent) 42deg,
-        transparent 75deg,
+        color-mix(in oklab, var(--primary) 92%, white) 18deg,
+        color-mix(in oklab, var(--primary) 72%, transparent) 42deg,
+        transparent 78deg,
         transparent 360deg
     );
     -webkit-mask:
@@ -263,14 +265,13 @@
         linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.55;
-    animation: shimmer-spin 3.2s linear infinite;
+    opacity: 0;
     transition: opacity 180ms ease-out;
     pointer-events: none;
     z-index: 1;
 }
 
-/* Hover / focus / open — turn the laser all the way up and speed up the spin */
+/* Hover / focus / open — shimmer ring appears and spins */
 .dark button[data-slot="button"]:hover::before,
 .dark button[data-slot="button"]:focus-visible::before,
 .dark button[data-slot="button"][data-state="open"]::before,
@@ -281,17 +282,20 @@
 .dark a[class*="button"]:hover::before,
 .dark a[class*="button"]:focus-visible::before {
     opacity: 1;
-    animation-duration: 1.8s;
+    animation: shimmer-spin 2s linear infinite;
 }
 
-/* Respect reduced motion preference — disable spin but keep the red edge visible */
+/* Respect reduced motion preference — freeze spin, keep the static red edge */
 @media (prefers-reduced-motion: reduce) {
-    .dark button[data-slot="button"]::before,
-    .dark [role="button"]::before,
-    .dark [data-slot="menu-button"]::before,
-    .dark a[class*="button"]::before {
+    .dark button[data-slot="button"]:hover::before,
+    .dark button[data-slot="button"]:focus-visible::before,
+    .dark [role="button"]:hover::before,
+    .dark [role="button"]:focus-visible::before,
+    .dark [data-slot="menu-button"]:hover::before,
+    .dark [data-slot="menu-button"][data-popup-open]::before,
+    .dark a[class*="button"]:hover::before,
+    .dark a[class*="button"]:focus-visible::before {
         animation: none;
-        opacity: 0.4;
     }
 }
 
