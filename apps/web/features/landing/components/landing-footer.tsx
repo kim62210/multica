@@ -23,7 +23,7 @@ export function LandingFooter() {
             <Link href="#product" className="flex items-center gap-3">
               <MulticaIcon className="size-5 text-white" noSpin />
               <span className="text-[16px] font-semibold tracking-[0.02em]">
-                {"Brian's MultiCarrier"}
+                {"SWARM"}
               </span>
             </Link>
             <p className="mt-4 max-w-[300px] text-[14px] leading-[1.7] text-white/50 sm:text-[15px]">
@@ -124,7 +124,7 @@ export function LandingFooter() {
               noSpin
             />
             <span className="font-[family-name:var(--font-serif)] text-[clamp(3rem,9vw,6rem)] font-normal leading-[0.95] tracking-[-0.02em] text-white">
-              {"Brian's MultiCarrier"}
+              {"SWARM"}
             </span>
           </div>
         </div>

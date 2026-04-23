@@ -49,17 +49,25 @@ func (s *EmailService) SendVerificationCode(to, code string) error {
 		return nil
 	}
 
+	appURL := strings.TrimRight(strings.TrimSpace(os.Getenv("FRONTEND_ORIGIN")), "/")
+	if appURL == "" {
+		appURL = "https://workspace.brian-dev.cloud"
+	}
+	logoURL := appURL + "/swarm.png"
+
 	params := &resend.SendEmailRequest{
 		From:    s.fromEmail,
 		To:      []string{to},
-		Subject: "Your Brian's MultiCarrier verification code",
+		Subject: "Your SWARM verification code",
 		Html: fmt.Sprintf(
-			`<div style="font-family: sans-serif; max-width: 400px; margin: 0 auto;">
-				<h2>Your verification code</h2>
+			`<div style="font-family: sans-serif; max-width: 400px; margin: 0 auto; text-align: center;">
+				<img src="%s" alt="SWARM" width="56" height="56" style="border-radius: 8px; display: inline-block; margin-bottom: 8px;">
+				<p style="font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #0a0a0a; margin: 0 0 16px;">SWARM</p>
+				<h2 style="margin: 0 0 8px;">Your verification code</h2>
 				<p style="font-size: 32px; font-weight: bold; letter-spacing: 8px; margin: 24px 0;">%s</p>
 				<p>This code expires in 10 minutes.</p>
 				<p style="color: #666; font-size: 14px;">If you didn't request this code, you can safely ignore this email.</p>
-			</div>`, code),
+			</div>`, logoURL, code),
 	}
 
 	_, err := s.client.Emails.Send(params)
@@ -94,19 +102,37 @@ func buildInvitationParams(from, to, inviterName, workspaceName, inviteURL strin
 	subjectInviter := sanitizeSubjectField(inviterName)
 	subjectWorkspace := sanitizeSubjectField(workspaceName)
 
+	// Derive the logo URL from the invite URL's origin (invitation links
+	// are always built with FRONTEND_ORIGIN, so this ends up on the same
+	// host as the logo asset served from /swarm.png).
+	origin := ""
+	if idx := strings.Index(inviteURL, "://"); idx != -1 {
+		if slash := strings.Index(inviteURL[idx+3:], "/"); slash != -1 {
+			origin = inviteURL[:idx+3+slash]
+		}
+	}
+	if origin == "" {
+		origin = "https://workspace.brian-dev.cloud"
+	}
+	logoURL := origin + "/swarm.png"
+
 	return &resend.SendEmailRequest{
 		From:    from,
 		To:      []string{to},
-		Subject: fmt.Sprintf("%s invited you to %s on Brian's MultiCarrier", subjectInviter, subjectWorkspace),
+		Subject: fmt.Sprintf("%s invited you to %s on SWARM", subjectInviter, subjectWorkspace),
 		Html: fmt.Sprintf(
 			`<div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+				<div style="text-align: center; margin-bottom: 16px;">
+					<img src="%s" alt="SWARM" width="48" height="48" style="border-radius: 8px; display: inline-block; vertical-align: middle;">
+					<span style="font-size: 12px; font-weight: bold; letter-spacing: 4px; color: #0a0a0a; margin-left: 10px; vertical-align: middle;">SWARM</span>
+				</div>
 				<h2>You're invited to join %s</h2>
-				<p><strong>%s</strong> invited you to collaborate in the <strong>%s</strong> workspace on Brian's MultiCarrier.</p>
+				<p><strong>%s</strong> invited you to collaborate in the <strong>%s</strong> workspace on SWARM.</p>
 				<p style="margin: 24px 0;">
 					<a href="%s" style="display: inline-block; padding: 12px 24px; background: #000; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500;">Accept invitation</a>
 				</p>
 				<p style="color: #666; font-size: 14px;">You'll need to log in to accept or decline the invitation.</p>
-			</div>`, safeWorkspace, safeInviter, safeWorkspace, inviteURL),
+			</div>`, logoURL, safeWorkspace, safeInviter, safeWorkspace, inviteURL),
 	}
 }
 

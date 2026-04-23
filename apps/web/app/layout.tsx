@@ -68,8 +68,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Brian's MultiCarrier",
-    template: "%s | Brian's MultiCarrier",
+    default: "SWARM",
+    template: "%s | SWARM",
   },
   description:
     "\uc0ac\ub78c\uacfc \uc5d0\uc774\uc804\ud2b8\uac00 \ud568\uaed8 \uc77c\ud558\ub294 \ub098\ub9cc\uc758 \uc791\uc5c5\uc2e4.",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "Brian's MultiCarrier",
+    siteName: "SWARM",
     locale: "ko_KR",
   },
   robots: {

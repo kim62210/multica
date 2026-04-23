@@ -20,13 +20,13 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      name: "Brian's MultiCarrier",
+      name: "SWARM",
       url: "https://workspace.brian-dev.cloud",
       sameAs: ["https://github.com/kim62210"],
     },
     {
       "@type": "SoftwareApplication",
-      name: "Brian's MultiCarrier",
+      name: "SWARM",
       applicationCategory: "ProjectManagement",
       operatingSystem: "Web",
       description:

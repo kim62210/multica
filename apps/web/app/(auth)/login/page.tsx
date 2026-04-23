@@ -160,6 +160,21 @@ function LoginPageContent() {
 
   return (
     <LoginPage
+      logo={
+        <div className="flex flex-col items-center gap-2">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/swarm.png"
+            alt="SWARM"
+            width={56}
+            height={56}
+            className="rounded-md"
+          />
+          <span className="text-[13px] font-bold tracking-[0.32em] text-foreground/80">
+            SWARM
+          </span>
+        </div>
+      }
       onSuccess={handleSuccess}
       google={
         googleClientId

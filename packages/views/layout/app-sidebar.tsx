@@ -424,6 +424,22 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
   return (
       <Sidebar variant="inset">
         {topSlot}
+        {/* SWARM brand header — fork-local branding above the workspace switcher */}
+        <SidebarHeader className="px-3 pt-3 pb-0">
+          <div className="flex items-center gap-2">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/swarm.png"
+              alt="SWARM"
+              width={24}
+              height={24}
+              className="shrink-0 rounded-sm"
+            />
+            <span className="text-[14px] font-bold tracking-[0.28em] text-sidebar-foreground/92">
+              SWARM
+            </span>
+          </div>
+        </SidebarHeader>
         {/* Workspace Switcher */}
         <SidebarHeader className={cn("py-3", headerClassName)} style={headerStyle}>
           <SidebarMenu>
@@ -434,7 +450,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                     <SidebarMenuButton>
                       <WorkspaceAvatar name={workspace?.name ?? "B"} size="sm" />
                       <span className="flex-1 truncate font-medium">
-                        {workspace?.name ?? "Brian's MultiCarrier"}
+                        {workspace?.name ?? "SWARM"}
                       </span>
                       <ChevronDown className="size-3 text-muted-foreground" />
                     </SidebarMenuButton>
