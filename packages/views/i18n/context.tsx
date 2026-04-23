@@ -1771,18 +1771,9 @@ function detectLocale(): Locale {
     }
   }
 
-  if (typeof navigator !== "undefined") {
-    const language = navigator.language.toLowerCase();
-    if (language.startsWith("ko")) return "ko";
-    if (language.startsWith("zh")) return "zh";
-    if (language.startsWith("ja")) return "ja";
-    if (language.startsWith("es")) return "es";
-    if (language.startsWith("fr")) return "fr";
-    if (language.startsWith("de")) return "de";
-    if (language.startsWith("en")) return "en";
-    return "ko";
-  }
-
+  // Personal fork: default to Korean regardless of browser navigator.language.
+  // Users can still pick other locales via the Settings switcher (stored in
+  // cookie/localStorage and persisted on subsequent visits).
   return "ko";
 }
 
