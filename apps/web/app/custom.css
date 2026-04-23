@@ -165,18 +165,21 @@
     z-index: 0;
 }
 
-/* Frosted glass on key shadcn surfaces — heavy blur carries readability at very low alpha */
+/* Frosted glass on key shadcn surfaces — heavy blur carries readability at very low alpha.
+ * !important to win against utility `backdrop-blur-*` and BaseUI defaults. */
 .dark [data-slot="card"],
 .dark [data-slot="popover-content"],
 .dark [data-slot="dropdown-menu-content"],
+.dark [data-slot="dropdown-menu-sub-content"],
 .dark [data-slot="dialog-content"],
 .dark [data-slot="sheet-content"],
 .dark [data-slot="select-content"],
 .dark [data-slot="command"],
 .dark [data-slot="hover-card-content"],
 .dark [data-slot="tooltip-content"] {
-    backdrop-filter: blur(44px) saturate(180%);
-    -webkit-backdrop-filter: blur(44px) saturate(180%);
+    backdrop-filter: blur(80px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(80px) saturate(180%) !important;
+    transform: translateZ(0);
     border-color: color-mix(in oklab, var(--primary) 38%, transparent);
 }
 
@@ -200,11 +203,15 @@
     border-right: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-/* Bottom-right chat surface — FAB button + expanded chat window */
+/* Bottom-right chat surface — FAB button + expanded chat window.
+ * Heavy blur + forced compositor layer so the backdrop filter actually
+ * paints (transform: translateZ(0) promotes the element and the
+ * backdrop layer is sampled from everything behind it). */
 .dark [data-slot="chat-window"],
 .dark [data-slot="chat-fab"] {
-    backdrop-filter: blur(42px) saturate(180%);
-    -webkit-backdrop-filter: blur(42px) saturate(180%);
+    backdrop-filter: blur(80px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(80px) saturate(180%) !important;
+    transform: translateZ(0);
 }
 
 /* Main content canvas: roughly half-and-half — pattern reads clearly
