@@ -6,6 +6,7 @@ import { Bot } from "lucide-react";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { agentListOptions } from "@multica/core/workspace/queries";
 import { ActorAvatar } from "../../../common/actor-avatar";
+import { useI18n } from "../../../i18n";
 import {
   PropertyPicker,
   PickerItem,
@@ -25,6 +26,7 @@ export function AgentPicker({
   triggerRender?: React.ReactElement;
   align?: "start" | "center" | "end";
 }) {
+  const { t } = useI18n();
   const wsId = useWorkspaceId();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
@@ -44,7 +46,7 @@ export function AgentPicker({
       width="w-56"
       align={align}
       searchable
-      searchPlaceholder="Filter agents..."
+      searchPlaceholder={t("autopilots.picker.agent.filter")}
       onSearchChange={setFilter}
       triggerRender={triggerRender}
       trigger={
@@ -58,7 +60,7 @@ export function AgentPicker({
             ) : (
               <>
                 <Bot className="size-3" />
-                <span>Select agent</span>
+                <span>{t("autopilots.picker.agent.select")}</span>
               </>
             )}
           </>

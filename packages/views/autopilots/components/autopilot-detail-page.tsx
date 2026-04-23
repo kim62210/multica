@@ -35,6 +35,7 @@ import {
 import type { TriggerConfig } from "./trigger-config";
 import type { AutopilotExecutionMode, AutopilotRun, AutopilotTrigger } from "@multica/core/types";
 import { ReadonlyContent } from "../../editor";
+import { useI18n } from "../../i18n";
 import { AutopilotDialog } from "./autopilot-dialog";
 
 function formatDate(date: string): string {
@@ -46,14 +47,15 @@ function formatDate(date: string): string {
   });
 }
 
-const RUN_STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof CheckCircle2; spin?: boolean }> = {
-  issue_created: { label: "Issue Created", color: "text-blue-500", icon: Clock },
-  running: { label: "Running", color: "text-blue-500", icon: Loader2, spin: true },
-  completed: { label: "Completed", color: "text-emerald-500", icon: CheckCircle2 },
-  failed: { label: "Failed", color: "text-destructive", icon: XCircle },
+const RUN_STATUS_CONFIG: Record<string, { labelKey: string; color: string; icon: typeof CheckCircle2; spin?: boolean }> = {
+  issue_created: { labelKey: "autopilots.run.status.issueCreated", color: "text-blue-500", icon: Clock },
+  running: { labelKey: "autopilots.run.status.running", color: "text-blue-500", icon: Loader2, spin: true },
+  completed: { labelKey: "autopilots.run.status.completed", color: "text-emerald-500", icon: CheckCircle2 },
+  failed: { labelKey: "autopilots.run.status.failed", color: "text-destructive", icon: XCircle },
 };
 
 function RunRow({ run }: { run: AutopilotRun }) {
+  const { t } = useI18n();
   const wsPaths = useWorkspacePaths();
   const cfg = (RUN_STATUS_CONFIG[run.status] ?? RUN_STATUS_CONFIG["issue_created"])!;
   const StatusIcon = cfg.icon;
@@ -61,11 +63,11 @@ function RunRow({ run }: { run: AutopilotRun }) {
   const content = (
     <>
       <StatusIcon className={cn("h-4 w-4 shrink-0", cfg.color, cfg.spin && "animate-spin")} />
-      <span className={cn("w-24 shrink-0 text-xs font-medium", cfg.color)}>{cfg.label}</span>
+      <span className={cn("w-24 shrink-0 text-xs font-medium", cfg.color)}>{t(cfg.labelKey)}</span>
       <span className="w-16 shrink-0 text-xs text-muted-foreground capitalize">{run.source}</span>
       <span className="flex-1 min-w-0 text-xs text-muted-foreground truncate">
         {run.issue_id ? (
-          "Issue linked"
+          t("autopilots.detail.issueLinked")
         ) : run.failure_reason ? (
           <span className="text-destructive">{run.failure_reason}</span>
         ) : null}
@@ -90,6 +92,7 @@ function RunRow({ run }: { run: AutopilotRun }) {
 }
 
 function TriggerRow({ trigger, autopilotId }: { trigger: AutopilotTrigger; autopilotId: string }) {
+  const { t } = useI18n();
   const deleteTrigger = useDeleteAutopilotTrigger();
 
   return (
@@ -102,7 +105,7 @@ function TriggerRow({ trigger, autopilotId }: { trigger: AutopilotTrigger; autop
             <span className="text-xs text-muted-foreground">({trigger.label})</span>
           )}
           {!trigger.enabled && (
-            <span className="text-xs bg-muted px-1.5 py-0.5 rounded">Disabled</span>
+            <span className="text-xs bg-muted px-1.5 py-0.5 rounded">{t("autopilots.detail.triggerDisabled")}</span>
           )}
         </div>
         {trigger.cron_expression && (
@@ -113,7 +116,7 @@ function TriggerRow({ trigger, autopilotId }: { trigger: AutopilotTrigger; autop
         )}
         {trigger.next_run_at && (
           <div className="text-xs text-muted-foreground">
-            Next: {formatDate(trigger.next_run_at)}
+            {t("autopilots.detail.triggerNext", { date: formatDate(trigger.next_run_at) })}
           </div>
         )}
       </div>
@@ -123,7 +126,7 @@ function TriggerRow({ trigger, autopilotId }: { trigger: AutopilotTrigger; autop
         className="h-7 w-7 shrink-0"
         onClick={() => {
           deleteTrigger.mutate({ autopilotId, triggerId: trigger.id });
-          toast.success("Trigger deleted");
+          toast.success(t("autopilots.toast.triggerDeleted"));
         }}
       >
         <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
@@ -141,6 +144,7 @@ function AddTriggerDialog({
   onOpenChange: (open: boolean) => void;
   autopilotId: string;
 }) {
+  const { t } = useI18n();
   const createTrigger = useCreateAutopilotTrigger();
   const [config, setConfig] = useState<TriggerConfig>(getDefaultTriggerConfig);
   const [label, setLabel] = useState("");
@@ -162,9 +166,9 @@ function AddTriggerDialog({
       onOpenChange(false);
       setConfig(getDefaultTriggerConfig());
       setLabel("");
-      toast.success("Trigger added");
+      toast.success(t("autopilots.toast.triggerAdded"));
     } catch {
-      toast.error("Failed to add trigger");
+      toast.error(t("autopilots.toast.triggerAddFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -173,22 +177,22 @@ function AddTriggerDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-sm">
-        <DialogTitle>Add Trigger</DialogTitle>
+        <DialogTitle>{t("autopilots.addTrigger.title")}</DialogTitle>
         <div className="space-y-4 pt-2">
           <TriggerConfigSection config={config} onChange={setConfig} />
           <div>
-            <label className="text-xs font-medium text-muted-foreground">Label (optional)</label>
+            <label className="text-xs font-medium text-muted-foreground">{t("autopilots.addTrigger.labelField")}</label>
             <input
               type="text"
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="e.g. Weekday morning"
+              placeholder={t("autopilots.addTrigger.labelPlaceholder")}
               className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
           <div className="flex justify-end pt-1">
             <Button size="sm" onClick={handleSubmit} disabled={submitting}>
-              {submitting ? "Adding..." : "Add trigger"}
+              {submitting ? t("autopilots.addTrigger.submitting") : t("autopilots.addTrigger.submit")}
             </Button>
           </div>
         </div>
@@ -198,6 +202,7 @@ function AddTriggerDialog({
 }
 
 export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
+  const { t } = useI18n();
   const wsId = useWorkspaceId();
   const wsPaths = useWorkspacePaths();
   const router = useNavigation();
@@ -254,7 +259,7 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
   if (!data) {
     return (
       <div className="flex items-center justify-center h-full text-muted-foreground">
-        Autopilot not found
+        {t("autopilots.detail.notFound")}
       </div>
     );
   }
@@ -264,19 +269,19 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
   const handleRunNow = async () => {
     try {
       await triggerAutopilot.mutateAsync(autopilotId);
-      toast.success("Autopilot triggered");
+      toast.success(t("autopilots.toast.triggered"));
     } catch (e: any) {
-      toast.error(e?.message || "Failed to trigger autopilot");
+      toast.error(e?.message || t("autopilots.toast.triggerFailed"));
     }
   };
 
   const handleDelete = async () => {
     try {
       await deleteAutopilot.mutateAsync(autopilotId);
-      toast.success("Autopilot deleted");
+      toast.success(t("autopilots.toast.deleted"));
       router.push(wsPaths.autopilots());
     } catch {
-      toast.error("Failed to delete autopilot");
+      toast.error(t("autopilots.toast.deleteFailed"));
     }
   };
 
@@ -300,7 +305,7 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
               checked={autopilot.status === "active"}
               onCheckedChange={handleToggleStatus}
               disabled={autopilot.status === "archived"}
-              aria-label={autopilot.status === "active" ? "Pause autopilot" : "Activate autopilot"}
+              aria-label={autopilot.status === "active" ? t("autopilots.detail.pauseAria") : t("autopilots.detail.activateAria")}
             />
             <span className={cn(
               "text-xs font-medium capitalize",
@@ -308,18 +313,24 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
               autopilot.status === "paused" ? "text-amber-500" :
               "text-muted-foreground",
             )}>
-              {autopilot.status}
+              {autopilot.status === "active"
+                ? t("autopilots.status.active")
+                : autopilot.status === "paused"
+                ? t("autopilots.status.paused")
+                : autopilot.status === "archived"
+                ? t("autopilots.status.archived")
+                : autopilot.status}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button size="sm" variant="outline" onClick={() => setEditDialogOpen(true)}>
             <Pencil className="h-3.5 w-3.5 mr-1" />
-            Edit
+            {t("autopilots.detail.edit")}
           </Button>
           <Button size="sm" onClick={handleRunNow} disabled={autopilot.status !== "active" || triggerAutopilot.isPending}>
             <Play className="h-3.5 w-3.5 mr-1" />
-            {triggerAutopilot.isPending ? "Running..." : "Run now"}
+            {triggerAutopilot.isPending ? t("autopilots.detail.running") : t("autopilots.detail.runNow")}
           </Button>
         </div>
       </PageHeader>
@@ -328,28 +339,30 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
         <div className="max-w-4xl mx-auto p-6 space-y-8">
           {/* Properties */}
           <section className="space-y-4">
-            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Properties</h2>
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t("autopilots.detail.propertiesHeader")}</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <label className="text-xs text-muted-foreground">Agent</label>
+                <label className="text-xs text-muted-foreground">{t("autopilots.detail.labelAgent")}</label>
                 <div className="mt-1 flex items-center gap-2">
                   <ActorAvatar actorType="agent" actorId={autopilot.assignee_id} size={20} />
                   <span>{getActorName("agent", autopilot.assignee_id)}</span>
                 </div>
               </div>
               <div>
-                <label className="text-xs text-muted-foreground">Priority</label>
+                <label className="text-xs text-muted-foreground">{t("autopilots.detail.labelPriority")}</label>
                 <div className="mt-1 capitalize">{autopilot.priority}</div>
               </div>
               <div>
-                <label className="text-xs text-muted-foreground">Execution Mode</label>
+                <label className="text-xs text-muted-foreground">{t("autopilots.detail.labelExecutionMode")}</label>
                 <div className="mt-1">
-                  {autopilot.execution_mode === "create_issue" ? "Create Issue" : "Run Only"}
+                  {autopilot.execution_mode === "create_issue"
+                    ? t("autopilots.executionMode.createIssue")
+                    : t("autopilots.executionMode.runOnly")}
                 </div>
               </div>
               {autopilot.description && (
                 <div className="col-span-2">
-                  <label className="text-xs text-muted-foreground">Prompt</label>
+                  <label className="text-xs text-muted-foreground">{t("autopilots.detail.labelPrompt")}</label>
                   <div className="mt-1">
                     <ReadonlyContent content={autopilot.description} />
                   </div>
@@ -361,20 +374,20 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
           {/* Triggers */}
           <section className="space-y-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Triggers</h2>
+              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t("autopilots.detail.triggersHeader")}</h2>
               <Button size="sm" variant="outline" onClick={() => setTriggerDialogOpen(true)}>
                 <Plus className="h-3.5 w-3.5 mr-1" />
-                Add trigger
+                {t("autopilots.detail.addTrigger")}
               </Button>
             </div>
             {triggers.length === 0 ? (
               <div className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
-                No triggers configured. Add a schedule to run automatically.
+                {t("autopilots.detail.noTriggers")}
               </div>
             ) : (
               <div className="space-y-2">
-                {triggers.map((t) => (
-                  <TriggerRow key={t.id} trigger={t} autopilotId={autopilotId} />
+                {triggers.map((trig) => (
+                  <TriggerRow key={trig.id} trigger={trig} autopilotId={autopilotId} />
                 ))}
               </div>
             )}
@@ -382,7 +395,7 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
 
           {/* Run History */}
           <section className="space-y-3">
-            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Run History</h2>
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t("autopilots.detail.runHistoryHeader")}</h2>
             {runsLoading ? (
               <div className="space-y-1">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -391,7 +404,7 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
               </div>
             ) : runs.length === 0 ? (
               <div className="rounded-md border border-dashed p-4 text-center text-sm text-muted-foreground">
-                No runs yet. Click &quot;Run now&quot; to trigger manually.
+                {t("autopilots.detail.noRuns")}
               </div>
             ) : (
               <div className="rounded-md border overflow-hidden">
@@ -404,10 +417,10 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
 
           {/* Danger zone */}
           <section className="space-y-3 pt-4 border-t">
-            <h2 className="text-sm font-medium text-destructive uppercase tracking-wider">Danger Zone</h2>
+            <h2 className="text-sm font-medium text-destructive uppercase tracking-wider">{t("autopilots.detail.dangerZone")}</h2>
             <Button size="sm" variant="destructive" onClick={handleDelete}>
               <Trash2 className="h-3.5 w-3.5 mr-1" />
-              Delete autopilot
+              {t("autopilots.detail.deleteAutopilot")}
             </Button>
           </section>
         </div>

@@ -9,6 +9,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@multica/ui/components/ui/select";
+import { useI18n } from "../../i18n";
 
 export type TriggerFrequency = "hourly" | "daily" | "weekdays" | "weekly" | "custom";
 
@@ -20,19 +21,31 @@ export interface TriggerConfig {
   timezone: string; // IANA
 }
 
+type TFn = (key: string, values?: Record<string, string | number>) => string;
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const FREQUENCIES: { value: TriggerFrequency; label: string }[] = [
-  { value: "hourly", label: "Hourly" },
-  { value: "daily", label: "Daily" },
-  { value: "weekdays", label: "Weekdays" },
-  { value: "weekly", label: "Days" },
-  { value: "custom", label: "Custom" },
-];
+const FREQUENCY_VALUES: TriggerFrequency[] = ["hourly", "daily", "weekdays", "weekly", "custom"];
 
-const DAYS_OF_WEEK = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const FREQUENCY_LABEL_KEYS: Record<TriggerFrequency, string> = {
+  hourly: "autopilots.trigger.frequency.hourly",
+  daily: "autopilots.trigger.frequency.daily",
+  weekdays: "autopilots.trigger.frequency.weekdays",
+  weekly: "autopilots.trigger.frequency.weekly",
+  custom: "autopilots.trigger.frequency.custom",
+};
+
+const DAY_LABEL_KEYS = [
+  "autopilots.trigger.day.sun",
+  "autopilots.trigger.day.mon",
+  "autopilots.trigger.day.tue",
+  "autopilots.trigger.day.wed",
+  "autopilots.trigger.day.thu",
+  "autopilots.trigger.day.fri",
+  "autopilots.trigger.day.sat",
+];
 
 const COMMON_TIMEZONES = [
   "UTC",
@@ -112,10 +125,10 @@ function sortedDays(days: number[]): number[] {
   return [...new Set(days)].sort((a, b) => a - b);
 }
 
-function formatDayList(days: number[]): string {
+function formatDayList(days: number[], t: TFn): string {
   const sorted = sortedDays(days);
   if (sorted.length === 0) return "—";
-  return sorted.map((d) => DAYS_OF_WEEK[d]).join(", ");
+  return sorted.map((d) => t(DAY_LABEL_KEYS[d]!)).join(", ");
 }
 
 export function toCronExpression(cfg: TriggerConfig): string {
@@ -173,38 +186,53 @@ export function parseCronExpression(cron: string, timezone: string): TriggerConf
   return { ...base, frequency: "custom" };
 }
 
-export function summarizeTrigger(cfg: TriggerConfig): string {
+export function summarizeTrigger(cfg: TriggerConfig, t: TFn): string {
   switch (cfg.frequency) {
     case "hourly": {
       const min = cfg.time.split(":")[1] ?? "00";
-      return `Hourly · :${min}`;
+      return t("autopilots.trigger.summary.hourly", { min });
     }
     case "daily":
-      return `Daily ${cfg.time}`;
+      return t("autopilots.trigger.summary.daily", { time: cfg.time });
     case "weekdays":
-      return `Weekdays ${cfg.time}`;
+      return t("autopilots.trigger.summary.weekdays", { time: cfg.time });
     case "weekly":
-      return `${formatDayList(cfg.daysOfWeek)} ${cfg.time}`;
+      return t("autopilots.trigger.summary.weekly", {
+        days: formatDayList(cfg.daysOfWeek, t),
+        time: cfg.time,
+      });
     case "custom":
-      return "Custom cron";
+      return t("autopilots.trigger.summary.custom");
   }
 }
 
-export function describeTrigger(cfg: TriggerConfig): string {
+export function describeTrigger(cfg: TriggerConfig, t: TFn): string {
   const offset = getTimezoneOffset(cfg.timezone);
   switch (cfg.frequency) {
     case "hourly": {
       const min = parseInt(cfg.time.split(":")[1] ?? "0", 10);
-      return `Runs every hour at :${min.toString().padStart(2, "0")}`;
+      return t("autopilots.trigger.describe.hourly", {
+        min: min.toString().padStart(2, "0"),
+      });
     }
     case "daily":
-      return `Runs daily at ${formatTime12h(cfg.time)} ${offset}`;
+      return t("autopilots.trigger.describe.daily", {
+        time: formatTime12h(cfg.time),
+        offset,
+      });
     case "weekdays":
-      return `Runs weekdays at ${formatTime12h(cfg.time)} ${offset}`;
+      return t("autopilots.trigger.describe.weekdays", {
+        time: formatTime12h(cfg.time),
+        offset,
+      });
     case "weekly":
-      return `Runs every ${formatDayList(cfg.daysOfWeek)} at ${formatTime12h(cfg.time)} ${offset}`;
+      return t("autopilots.trigger.describe.weekly", {
+        days: formatDayList(cfg.daysOfWeek, t),
+        time: formatTime12h(cfg.time),
+        offset,
+      });
     case "custom":
-      return `Custom schedule: ${cfg.cronExpression}`;
+      return t("autopilots.trigger.describe.custom", { cron: cfg.cronExpression });
   }
 }
 
@@ -219,6 +247,7 @@ export function TriggerConfigSection({
   config: TriggerConfig;
   onChange: (config: TriggerConfig) => void;
 }) {
+  const { t } = useI18n();
   const timezones = useMemo(() => {
     const local = getLocalTimezone();
     const set = new Set(COMMON_TIMEZONES);
@@ -229,19 +258,19 @@ export function TriggerConfigSection({
     <div className="space-y-3">
       {/* Frequency tabs */}
       <div className="flex flex-wrap gap-1">
-        {FREQUENCIES.map((f) => (
+        {FREQUENCY_VALUES.map((f) => (
           <button
-            key={f.value}
+            key={f}
             type="button"
             className={cn(
               "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-              config.frequency === f.value
+              config.frequency === f
                 ? "bg-foreground text-background"
                 : "bg-muted text-muted-foreground hover:text-foreground",
             )}
-            onClick={() => onChange({ ...config, frequency: f.value })}
+            onClick={() => onChange({ ...config, frequency: f })}
           >
-            {f.label}
+            {t(FREQUENCY_LABEL_KEYS[f])}
           </button>
         ))}
       </div>
@@ -249,16 +278,16 @@ export function TriggerConfigSection({
       {config.frequency === "custom" ? (
         /* Custom cron input */
         <div>
-          <label className="text-xs text-muted-foreground">Cron Expression</label>
+          <label className="text-xs text-muted-foreground">{t("autopilots.trigger.field.cron")}</label>
           <input
             type="text"
             value={config.cronExpression}
             onChange={(e) => onChange({ ...config, cronExpression: e.target.value })}
-            placeholder="0 9 * * 1-5"
+            placeholder={t("autopilots.trigger.field.cronPlaceholder")}
             className="mt-1 w-full rounded-md border bg-background px-3 py-2 text-sm font-mono outline-none focus:ring-1 focus:ring-ring"
           />
           <p className="text-xs text-muted-foreground mt-1">
-            Standard 5-field cron (min hour dom month dow)
+            {t("autopilots.trigger.field.cronHelp")}
           </p>
         </div>
       ) : (
@@ -267,7 +296,7 @@ export function TriggerConfigSection({
           <div className="flex gap-3">
             {config.frequency === "hourly" ? (
               <div className="w-24">
-                <label className="text-xs text-muted-foreground">Minute</label>
+                <label className="text-xs text-muted-foreground">{t("autopilots.trigger.field.minute")}</label>
                 <input
                   type="number"
                   min={0}
@@ -283,7 +312,7 @@ export function TriggerConfigSection({
             ) : (
               <>
                 <div className="w-28">
-                  <label className="text-xs text-muted-foreground">Time</label>
+                  <label className="text-xs text-muted-foreground">{t("autopilots.trigger.field.time")}</label>
                   <input
                     type="time"
                     value={config.time}
@@ -292,7 +321,7 @@ export function TriggerConfigSection({
                   />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <label className="text-xs text-muted-foreground">Timezone</label>
+                  <label className="text-xs text-muted-foreground">{t("autopilots.trigger.field.timezone")}</label>
                   <Select
                     value={config.timezone}
                     onValueChange={(v) => v && onChange({ ...config, timezone: v })}
@@ -318,13 +347,13 @@ export function TriggerConfigSection({
           {/* Day-of-week multi-selector for weekly */}
           {config.frequency === "weekly" && (
             <div>
-              <label className="text-xs text-muted-foreground">Days</label>
+              <label className="text-xs text-muted-foreground">{t("autopilots.trigger.field.days")}</label>
               <div className="flex gap-1 mt-1">
-                {DAYS_OF_WEEK.map((day, i) => {
+                {DAY_LABEL_KEYS.map((dayKey, i) => {
                   const selected = config.daysOfWeek.includes(i);
                   return (
                     <button
-                      key={day}
+                      key={dayKey}
                       type="button"
                       aria-pressed={selected}
                       className={cn(
@@ -344,7 +373,7 @@ export function TriggerConfigSection({
                         });
                       }}
                     >
-                      {day}
+                      {t(dayKey)}
                     </button>
                   );
                 })}
@@ -355,7 +384,7 @@ export function TriggerConfigSection({
       )}
 
       {/* Human-readable preview */}
-      <p className="text-xs text-muted-foreground">{describeTrigger(config)}</p>
+      <p className="text-xs text-muted-foreground">{describeTrigger(config, t)}</p>
     </div>
   );
 }

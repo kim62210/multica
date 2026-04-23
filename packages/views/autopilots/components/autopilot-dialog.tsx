@@ -26,6 +26,7 @@ import type {
 import { TitleEditor, ContentEditor } from "../../editor";
 import { PillButton } from "../../common/pill-button";
 import { PriorityPicker } from "../../issues/components/pickers";
+import { useI18n } from "../../i18n";
 import {
   getDefaultTriggerConfig,
   parseCronExpression,
@@ -72,6 +73,7 @@ export type AutopilotDialogProps =
 
 export function AutopilotDialog(props: AutopilotDialogProps) {
   const { open, onOpenChange } = props;
+  const { t } = useI18n();
   const workspaceName = useCurrentWorkspace()?.name;
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -116,10 +118,10 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
   const schedulePillDisabled = !isCreate && triggerCount >= 2;
 
   const schedulePillLabel = (() => {
-    if (isCreate) return summarizeTrigger(triggerConfig);
-    if (triggerCount === 0) return "Add schedule";
-    if (triggerCount === 1) return summarizeTrigger(triggerConfig);
-    return `${triggerCount} schedules`;
+    if (isCreate) return summarizeTrigger(triggerConfig, t);
+    if (triggerCount === 0) return t("autopilots.dialog.addSchedule");
+    if (triggerCount === 1) return summarizeTrigger(triggerConfig, t);
+    return t("autopilots.dialog.schedulesCount", { count: triggerCount });
   })();
 
   const createAutopilot = useCreateAutopilot();
@@ -154,8 +156,8 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           scheduleOk = false;
         }
         onOpenChange(false);
-        if (scheduleOk) toast.success("Autopilot created");
-        else toast.error("Autopilot created, but schedule failed to save");
+        if (scheduleOk) toast.success(t("autopilots.toast.created"));
+        else toast.error(t("autopilots.toast.createdScheduleFailed"));
       } else {
         await updateAutopilot.mutateAsync({
           id: props.autopilotId,
@@ -190,11 +192,11 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           }
         }
         onOpenChange(false);
-        if (scheduleOk) toast.success("Autopilot updated");
-        else toast.error("Autopilot updated, but schedule failed to save");
+        if (scheduleOk) toast.success(t("autopilots.toast.updated"));
+        else toast.error(t("autopilots.toast.updatedScheduleFailed"));
       }
     } catch {
-      toast.error(isCreate ? "Failed to create autopilot" : "Failed to update autopilot");
+      toast.error(t(isCreate ? "autopilots.toast.createFailed" : "autopilots.toast.updateFailed"));
     } finally {
       setSubmitting(false);
     }
@@ -214,7 +216,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
         )}
       >
         <DialogTitle className="sr-only">
-          {isCreate ? "New Autopilot" : "Edit Autopilot"}
+          {isCreate ? t("autopilots.dialog.newTitleSr") : t("autopilots.dialog.editTitleSr")}
         </DialogTitle>
 
         {/* Header */}
@@ -224,7 +226,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
             <ChevronRight className="size-3 text-muted-foreground/50" />
             <Rocket className="size-3 text-muted-foreground" />
             <span className="font-medium">
-              {isCreate ? "New autopilot" : "Edit autopilot"}
+              {isCreate ? t("autopilots.dialog.newTitle") : t("autopilots.dialog.editTitle")}
             </span>
           </div>
           <div className="flex items-center gap-1">
@@ -239,7 +241,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                   </button>
                 }
               />
-              <TooltipContent side="bottom">{isExpanded ? "Collapse" : "Expand"}</TooltipContent>
+              <TooltipContent side="bottom">{isExpanded ? t("autopilots.dialog.collapse") : t("autopilots.dialog.expand")}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger
@@ -252,7 +254,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                   </button>
                 }
               />
-              <TooltipContent side="bottom">Close</TooltipContent>
+              <TooltipContent side="bottom">{t("autopilots.dialog.close")}</TooltipContent>
             </Tooltip>
           </div>
         </div>
@@ -264,7 +266,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
             <TitleEditor
               autoFocus={isCreate}
               defaultValue={initial.title ?? ""}
-              placeholder="Autopilot name"
+              placeholder={t("autopilots.dialog.namePlaceholder")}
               className="text-lg font-semibold"
               onChange={setTitle}
               onSubmit={handleSubmit}
@@ -275,7 +277,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           <div className="relative flex-1 min-h-0 overflow-y-auto px-5">
             <ContentEditor
               defaultValue={initial.description ?? ""}
-              placeholder="Step-by-step instructions for the agent..."
+              placeholder={t("autopilots.dialog.promptPlaceholder")}
               onUpdate={setDescription}
               debounceMs={300}
               showBubbleMenu={false}
@@ -315,7 +317,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                     </PillButton>
                   }
                 />
-                <TooltipContent side="top">Edit schedules in detail page</TooltipContent>
+                <TooltipContent side="top">{t("autopilots.dialog.editSchedulesTooltip")}</TooltipContent>
               </Tooltip>
             ) : (
               <SchedulePicker
@@ -334,12 +336,12 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           {/* Footer */}
           <div className="flex items-center justify-end gap-2 px-4 py-3 border-t shrink-0">
             <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t("autopilots.dialog.cancel")}
             </Button>
             <Button size="sm" onClick={handleSubmit} disabled={!canSubmit}>
               {submitting
-                ? isCreate ? "Creating..." : "Saving..."
-                : isCreate ? "Create autopilot" : "Save"}
+                ? isCreate ? t("autopilots.dialog.creating") : t("autopilots.dialog.saving")
+                : isCreate ? t("autopilots.dialog.create") : t("autopilots.dialog.save")}
             </Button>
           </div>
         </div>

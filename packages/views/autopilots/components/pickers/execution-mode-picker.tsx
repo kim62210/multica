@@ -8,10 +8,21 @@ import {
   PropertyPicker,
   PickerItem,
 } from "../../../issues/components/pickers/property-picker";
+import { useI18n } from "../../../i18n";
 
-const OPTIONS: { value: AutopilotExecutionMode; label: string; description: string; Icon: typeof FilePlus2 }[] = [
-  { value: "create_issue", label: "Create Issue", description: "File an issue with the agent assigned", Icon: FilePlus2 },
-  { value: "run_only", label: "Run Only", description: "Run the agent without creating an issue", Icon: Play },
+const OPTIONS: { value: AutopilotExecutionMode; labelKey: string; descriptionKey: string; Icon: typeof FilePlus2 }[] = [
+  {
+    value: "create_issue",
+    labelKey: "autopilots.executionMode.createIssue",
+    descriptionKey: "autopilots.executionMode.createIssueDescription",
+    Icon: FilePlus2,
+  },
+  {
+    value: "run_only",
+    labelKey: "autopilots.executionMode.runOnly",
+    descriptionKey: "autopilots.executionMode.runOnlyDescription",
+    Icon: Play,
+  },
 ];
 
 export function ExecutionModePicker({
@@ -27,6 +38,7 @@ export function ExecutionModePicker({
   triggerRender?: React.ReactElement;
   align?: "start" | "center" | "end";
 }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const current = OPTIONS.find((o) => o.value === mode) ?? OPTIONS[0]!;
   const CurrentIcon = current.Icon;
@@ -42,7 +54,7 @@ export function ExecutionModePicker({
         customTrigger ?? (
           <>
             <CurrentIcon className="size-3 shrink-0" />
-            <span className="truncate">{current.label}</span>
+            <span className="truncate">{t(current.labelKey)}</span>
           </>
         )
       }
@@ -61,12 +73,12 @@ export function ExecutionModePicker({
                   }}
                 >
                   <Icon className="size-3.5 shrink-0 text-muted-foreground" />
-                  <span>{o.label}</span>
+                  <span>{t(o.labelKey)}</span>
                 </PickerItem>
               }
             />
             <TooltipContent side="right" sideOffset={8}>
-              {o.description}
+              {t(o.descriptionKey)}
             </TooltipContent>
           </Tooltip>
         );
