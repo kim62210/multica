@@ -199,15 +199,7 @@
     box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary) 55%, transparent);
 }
 
-/* Primary buttons: neon glow */
-.dark button[data-slot="button"]:is([data-variant="default"], :not([data-variant])),
-.dark [role="button"][data-variant="default"] {
-    box-shadow:
-        inset 0 0 0 1px color-mix(in oklab, var(--primary) 30%, transparent),
-        0 10px 32px -12px color-mix(in oklab, var(--primary) 55%, transparent);
-}
-
-/* Focus ring globally (accessibility + neon feel) */
+/* Focus ring globally (accessibility + neon feel) — only when keyboard-focused */
 .dark :focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary) 70%, transparent);
     outline-offset: 2px;
@@ -245,9 +237,10 @@
     content: "";
     position: absolute;
     inset: 0;
-    /* inherit the exact border-radius of the parent element so the ring
-     * traces the button edge — works for rounded, pill, and square shapes alike */
+    /* Match the exact shape of the parent — inherit its border-radius so
+     * the ring traces rounded, pill, or square shapes identically. */
     border-radius: inherit;
+    box-sizing: border-box;
     padding: 1.5px;
     background: conic-gradient(
         from var(--shimmer-angle),
@@ -299,20 +292,12 @@
     }
 }
 
-/* Give buttons a subtle ambient red halo even at rest so they feel alive */
-.dark button[data-slot="button"][data-variant="default"],
-.dark [role="button"][data-variant="default"] {
-    box-shadow:
-        inset 0 0 0 1px color-mix(in oklab, var(--primary) 35%, transparent),
-        0 12px 36px -12px color-mix(in oklab, var(--primary) 65%, transparent);
-}
-
+/* Primary button halo — only on hover, to keep rest state clean */
 .dark button[data-slot="button"][data-variant="default"]:hover,
 .dark [role="button"][data-variant="default"]:hover {
     box-shadow:
-        inset 0 0 0 1px color-mix(in oklab, var(--primary) 60%, transparent),
-        0 0 24px -4px color-mix(in oklab, var(--primary) 70%, transparent),
-        0 20px 44px -12px color-mix(in oklab, var(--primary) 85%, transparent);
+        0 0 24px -4px color-mix(in oklab, var(--primary) 60%, transparent),
+        0 20px 44px -12px color-mix(in oklab, var(--primary) 75%, transparent);
 }
 
 /* Inputs: glowing ring while focused */
