@@ -180,6 +180,20 @@
     border-color: color-mix(in oklab, var(--primary) 38%, transparent);
 }
 
+/* Modal / overlay backdrops — push the background out of focus so the
+ * foreground dialog reads as cleanly as possible. Applies to Radix /
+ * shadcn overlays across Dialog / AlertDialog / Sheet / Drawer. */
+.dark [data-slot="dialog-overlay"],
+.dark [data-slot="alert-dialog-overlay"],
+.dark [data-slot="sheet-overlay"],
+.dark [data-slot="drawer-overlay"],
+.dark [data-radix-dialog-overlay],
+.dark [data-radix-alert-dialog-overlay] {
+    backdrop-filter: blur(28px) saturate(130%) brightness(0.7);
+    -webkit-backdrop-filter: blur(28px) saturate(130%) brightness(0.7);
+    background-color: oklch(0.05 0.01 15 / 0.38);
+}
+
 .dark [data-sidebar="sidebar"] {
     backdrop-filter: blur(52px) saturate(200%);
     -webkit-backdrop-filter: blur(52px) saturate(200%);
