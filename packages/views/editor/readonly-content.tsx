@@ -33,6 +33,7 @@ import { Maximize2, Download, Link as LinkIcon, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@multica/ui/lib/utils";
 import { useWorkspacePaths, useWorkspaceSlug } from "@multica/core/paths";
+import { useI18n } from "../i18n";
 import { useNavigation } from "../navigation";
 import { IssueMentionCard } from "../issues/components/issue-mention-card";
 import { ImageLightbox } from "./extensions/image-view";
@@ -162,6 +163,7 @@ const components: Partial<Components> = {
 
   // Images — centered with toolbar + lightbox (matches Tiptap ImageView NodeView)
   img: function ReadonlyImage({ src, alt }) {
+    const { t } = useI18n();
     const [lightbox, setLightbox] = useState(false);
     const imgSrc = typeof src === "string" ? src : "";
     const imgAlt = alt ?? "";
@@ -173,9 +175,9 @@ const components: Partial<Components> = {
     const handleCopyLink = async () => {
       try {
         await navigator.clipboard.writeText(imgSrc);
-        toast.success("Link copied");
+        toast.success(t("editor.readonlyImage.copiedToast"));
       } catch {
-        toast.error("Failed to copy link");
+        toast.error(t("editor.readonlyImage.copyFailedToast"));
       }
     };
 
@@ -188,13 +190,13 @@ const components: Partial<Components> = {
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
           >
-            <button type="button" onClick={handleView} title="View image">
+            <button type="button" onClick={handleView} title={t("editor.readonlyImage.viewTitle")}>
               <Maximize2 className="size-3.5" />
             </button>
-            <button type="button" onClick={handleDownload} title="Download">
+            <button type="button" onClick={handleDownload} title={t("editor.readonlyImage.downloadTitle")}>
               <Download className="size-3.5" />
             </button>
-            <button type="button" onClick={handleCopyLink} title="Copy link">
+            <button type="button" onClick={handleCopyLink} title={t("editor.readonlyImage.copyLinkTitle")}>
               <LinkIcon className="size-3.5" />
             </button>
           </span>
