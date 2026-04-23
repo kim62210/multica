@@ -38,7 +38,7 @@ export function buildWelcomeIssueText(
   const name = userName.trim() || "there";
 
   const header = [
-    `Welcome to Multica! 👋`,
+    `Welcome to Brian's MultiCarrier! 👋`,
     ``,
     `This is your workspace's first issue. Below, your agent will reply in a moment — that's how work happens here: you write what you want, your agent (or a teammate) picks it up and replies in the comments.`,
     ``,
@@ -50,7 +50,7 @@ export function buildWelcomeIssueText(
     `In your first reply, please:`,
     ``,
     `1. **Introduce yourself briefly** — your name, your role, what you're good at.`,
-    `2. **Explain how we work together in Multica**:`,
+    `2. **Explain how we work together in Brian's MultiCarrier**:`,
     `   - Assigning an issue to you **and** setting its status to **Todo** is what triggers you to start (Backlog pauses you)`,
     `   - @mentioning you inside a comment is for quick questions`,
     `   - **Workspace Context** (in Settings → General) is shared background every agent here sees`,
@@ -66,7 +66,7 @@ export function buildWelcomeIssueText(
     `In your first reply, please:`,
     ``,
     `1. **Introduce yourself briefly** — your name, your role, what you're good at.`,
-    `2. **Explain how we work together in Multica**:`,
+    `2. **Explain how we work together in Brian's MultiCarrier**:`,
     `   - Assigning an issue to you **and** setting its status to **Todo** triggers you to start (Backlog pauses you)`,
     `   - @mentioning you inside a comment is for quick questions`,
     `   - **Workspace Context** (in Settings → General) is shared background every agent here sees`,
@@ -78,23 +78,23 @@ export function buildWelcomeIssueText(
   switch (q.use_case) {
     case "coding":
       return {
-        title: "👋 Welcome to Multica — let's work together",
-        description: `${header}Hi agent, this is ${name}'s first time using Multica. They plan to use you mostly for **coding work**.\n\n${sharedInstructions}`,
+        title: "👋 Welcome to Brian's MultiCarrier — let's work together",
+        description: `${header}Hi agent, this is ${name}'s first time using Brian's MultiCarrier. They plan to use you mostly for **coding work**.\n\n${sharedInstructions}`,
       };
     case "planning":
       return {
-        title: "👋 Welcome to Multica — let's work together",
-        description: `${header}Hi agent, this is ${name}'s first time using Multica. They want your help with **planning and breaking down work**.\n\n${sharedInstructions}`,
+        title: "👋 Welcome to Brian's MultiCarrier — let's work together",
+        description: `${header}Hi agent, this is ${name}'s first time using Brian's MultiCarrier. They want your help with **planning and breaking down work**.\n\n${sharedInstructions}`,
       };
     case "writing_research":
       return {
-        title: "👋 Welcome to Multica — let's work together",
-        description: `${header}Hi agent, this is ${name}'s first time using Multica. They'll use you for **research and writing** — drafting, summarizing, analysis.\n\n${sharedInstructions}`,
+        title: "👋 Welcome to Brian's MultiCarrier — let's work together",
+        description: `${header}Hi agent, this is ${name}'s first time using Brian's MultiCarrier. They'll use you for **research and writing** — drafting, summarizing, analysis.\n\n${sharedInstructions}`,
       };
     case "explore":
       return {
-        title: "👋 Welcome to Multica — let's work together",
-        description: `${header}Hi agent, this is ${name}'s first time using Multica. They're **exploring** what Multica can do — no specific goal yet.\n\n${exploreInstructions}`,
+        title: "👋 Welcome to Brian's MultiCarrier — let's work together",
+        description: `${header}Hi agent, this is ${name}'s first time using Brian's MultiCarrier. They're **exploring** what Brian's MultiCarrier can do — no specific goal yet.\n\n${exploreInstructions}`,
       };
     case "other": {
       const customUseCase = (q.use_case_other ?? "").trim();
@@ -102,14 +102,14 @@ export function buildWelcomeIssueText(
         ? `They told us they want to use you for: "${customUseCase}".`
         : `They haven't narrowed down their use case yet.`;
       return {
-        title: "👋 Welcome to Multica — let's work together",
-        description: `${header}Hi agent, this is ${name}'s first time using Multica. ${contextLine}\n\n${sharedInstructions}`,
+        title: "👋 Welcome to Brian's MultiCarrier — let's work together",
+        description: `${header}Hi agent, this is ${name}'s first time using Brian's MultiCarrier. ${contextLine}\n\n${sharedInstructions}`,
       };
     }
     default:
       return {
-        title: "👋 Welcome to Multica — let's work together",
-        description: `${header}Hi agent, this is ${name}'s first time using Multica.\n\n${sharedInstructions}`,
+        title: "👋 Welcome to Brian's MultiCarrier — let's work together",
+        description: `${header}Hi agent, this is ${name}'s first time using Brian's MultiCarrier.\n\n${sharedInstructions}`,
       };
   }
 }
@@ -125,7 +125,7 @@ export function buildAgentGuidedSubIssues(
       assign_to_self: true,
       title: "Learn how to trigger your agent on any issue",
       description: [
-        `**Every issue has a right-side panel** called **Properties**. From there you control who works on what. Agents in Multica are triggered when an issue has:`,
+        `**Every issue has a right-side panel** called **Properties**. From there you control who works on what. Agents in Brian's MultiCarrier are triggered when an issue has:`,
         ``,
         `  Assignee = your agent  AND  Status = Todo (not Backlog)`,
         ``,
@@ -201,7 +201,7 @@ export function buildAgentGuidedSubIssues(
       assign_to_self: true,
       title: "Invite your teammates",
       description: [
-        `Multica works best when a small team shares agents.`,
+        `Brian's MultiCarrier works best when a small team shares agents.`,
         ``,
         `**Where to find it**:`,
         `1. Sidebar → **Settings** (⚙️, bottom)`,
@@ -353,7 +353,7 @@ export function buildSelfServeSubIssues(
   q: QuestionnaireAnswers,
 ): ImportStarterIssuePayload[] {
   // --- Tier 1: Unlock agent ability (Todo / high) ---------------------------
-  // Without a runtime + an agent, nothing else in Multica works. These two
+  // Without a runtime + an agent, nothing else in Brian's MultiCarrier works. These two
   // are the gates — everything below them waits on them.
   const tier1: ImportStarterIssuePayload[] = [
     {
@@ -420,7 +420,7 @@ export function buildSelfServeSubIssues(
       description: [
         `**Prerequisite**: you have a runtime + agent from the two tasks above.`,
         ``,
-        `**How Multica triggers agents**:`,
+        `**How Brian's MultiCarrier triggers agents**:`,
         `- Assign an issue to an agent`,
         `- Set status to **Todo** (not Backlog — backlog pauses agents)`,
         `- The agent picks it up automatically`,
@@ -511,7 +511,7 @@ export function buildSelfServeSubIssues(
       assign_to_self: true,
       title: "Invite your teammates",
       description: [
-        `Multica works best when a small team shares agents.`,
+        `Brian's MultiCarrier works best when a small team shares agents.`,
         ``,
         `**Where to find it**:`,
         `1. Sidebar → **Settings** (⚙️, bottom)`,
@@ -597,7 +597,7 @@ export function buildImportPayload({
     project: {
       title: "Getting Started",
       description:
-        "A few things to try in Multica. Work through them at your own pace.",
+        "A few things to try in Brian's MultiCarrier. Work through them at your own pace.",
       icon: "👋",
     },
     welcome_issue_template: {
