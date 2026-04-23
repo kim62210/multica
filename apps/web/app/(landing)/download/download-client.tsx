@@ -112,7 +112,7 @@ function VersionInfoFooter({
               target="_blank"
               rel="noreferrer"
             >
-              {d.releaseNotes.replace("{version}", version)}
+              {d.releaseNotes}
             </Link>
             <span aria-hidden className="text-[#0a0d12]/25">
               ·

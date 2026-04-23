@@ -818,7 +818,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       sub: "We’ll host the runtime for you. Not live yet — leave your email to be notified.",
     },
     footer: {
-      releaseNotes: "What’s new in {version}",
+      releaseNotes: "GitHub",
       allReleases: "View all releases",
       currentVersion: "Current version: {version}",
       versionUnavailable: "Version unavailable — check GitHub",

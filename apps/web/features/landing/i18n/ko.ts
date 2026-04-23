@@ -341,7 +341,7 @@ export function createKoDict(allowSignup: boolean): LandingDict {
       sub: "\ub7f0\ud0c0\uc784\uc744 \uc800\ud76c\uac00 \ud638\uc2a4\ud305\ud574\ub4dc\ub9bd\ub2c8\ub2e4. \uc544\uc9c1 \uc624\ud508\ub418\uc9c0 \uc54a\uc558\uc73c\uba70, \uc774\uba54\uc77c\uc744 \ub0a8\uaca8\uc8fc\uc2dc\uba74 \uc54c\ub824\ub4dc\ub9ac\uaca0\uc2b5\ub2c8\ub2e4.",
     },
     footer: {
-      releaseNotes: "{version} \uc5d0\uc11c\uc758 \uc0c8\ub85c\uc6b4 \uc18c\uc2dd",
+      releaseNotes: "GitHub",
       allReleases: "\ubaa8\ub4e0 \ub9b4\ub9ac\uc2a4 \ubcf4\uae30",
       currentVersion: "\ud604\uc7ac \ubc84\uc804: {version}",
       versionUnavailable: "\ubc84\uc804 \uc815\ubcf4 \uc5c6\uc74c \u2014 GitHub \ud655\uc778",
