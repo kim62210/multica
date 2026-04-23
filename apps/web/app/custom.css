@@ -112,36 +112,55 @@
     --radius: 0.55rem;
 }
 
-/* Cyber gradient background — two neon radial glows over indigo base */
+/* Cinematic layered background:
+ *   [top]   radial violet glow (top-left)
+ *   [ ]     radial cyan glow (bottom-right)
+ *   [ ]     dark indigo overlay (content readability)
+ *   [bot]   /pattern.png texture (red/black diagonal stripes)
+ * Alpha values tuned so the pattern bleeds through without overpowering
+ * foreground glass surfaces. All layers scroll-pinned via fixed attachment. */
 .dark body {
     background:
-        radial-gradient(ellipse 70% 60% at 12% -15%,
-            oklch(0.38 0.25 295 / 0.55),
+        radial-gradient(ellipse 65% 55% at 10% -8%,
+            oklch(0.45 0.25 295 / 0.35),
             transparent 55%),
-        radial-gradient(ellipse 70% 60% at 115% 110%,
-            oklch(0.32 0.23 220 / 0.5),
+        radial-gradient(ellipse 55% 50% at 115% 108%,
+            oklch(0.38 0.22 220 / 0.3),
             transparent 55%),
-        radial-gradient(ellipse 60% 55% at 50% 110%,
-            oklch(0.3 0.22 330 / 0.28),
-            transparent 60%),
         linear-gradient(180deg,
-            oklch(0.09 0.02 270),
-            oklch(0.14 0.025 270));
+            oklch(0.09 0.02 270 / 0.78),
+            oklch(0.12 0.02 270 / 0.82)),
+        url("/pattern.png") center center / cover no-repeat,
+        oklch(0.08 0.01 270);
     background-attachment: fixed;
     min-height: 100vh;
 }
 
-/* Subtle cyber grid overlay (behind content) */
+/* Subtle cyber grid overlay on top of the image+overlay stack, behind content */
 .dark body::before {
     content: "";
     position: fixed;
     inset: 0;
     background-image:
-        linear-gradient(oklch(0.72 0.14 295 / 0.06) 1px, transparent 1px),
-        linear-gradient(90deg, oklch(0.72 0.14 295 / 0.06) 1px, transparent 1px);
-    background-size: 44px 44px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+        linear-gradient(oklch(0.9 0.04 295 / 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, oklch(0.9 0.04 295 / 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Page-level scrim below interactive surfaces — deepens corners so glass
+ * cards pop against the pattern without losing contrast. */
+.dark body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at center,
+            transparent 35%,
+            oklch(0.05 0.01 270 / 0.35) 90%);
     pointer-events: none;
     z-index: 0;
 }
