@@ -225,7 +225,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         links: [
           { label: "Features", href: "#features" },
           { label: "How it Works", href: "#how-it-works" },
-          { label: "Changelog", href: "/changelog" },
+          { label: "Changelog", href: "https://github.com/kim62210" },
           { label: "Download", href: "/download" },
         ],
       },
