@@ -97,11 +97,11 @@ export default function RootLayout({
     <html
       lang="ko"
       suppressHydrationWarning
-      className={cn("antialiased font-sans h-full", inter.variable, geistMono.variable, sourceSerif.variable)}
+      className={cn("dark antialiased font-sans h-full", inter.variable, geistMono.variable, sourceSerif.variable)}
     >
       <body className="h-full overflow-hidden">
         <I18nProvider>
-          <ThemeProvider defaultTheme="dark" enableSystem={false}>
+          <ThemeProvider defaultTheme="dark" enableSystem={false} forcedTheme="dark">
             <WebProviders>
               {children}
             </WebProviders>
