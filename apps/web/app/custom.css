@@ -52,60 +52,60 @@
  * Landing routes stay light via `.landing-light` above.
  * ============================================================================= */
 .dark {
-    /* Cyber-night base (deep indigo) */
-    --background: oklch(0.125 0.025 270);
-    --foreground: oklch(0.96 0.01 270);
+    /* Cinema-black base tuned to work with red/black pattern background */
+    --background: oklch(0.12 0.018 15);
+    --foreground: oklch(0.97 0.005 15);
 
-    /* Glass surfaces — alpha < 1 so cyber bg bleeds through */
-    --card: oklch(0.20 0.02 270 / 0.62);
-    --card-foreground: oklch(0.96 0.01 270);
-    --popover: oklch(0.18 0.02 270 / 0.88);
-    --popover-foreground: oklch(0.96 0.01 270);
+    /* Glass surfaces — alpha < 1 so pattern bleeds through */
+    --card: oklch(0.20 0.02 15 / 0.62);
+    --card-foreground: oklch(0.97 0.005 15);
+    --popover: oklch(0.18 0.02 15 / 0.88);
+    --popover-foreground: oklch(0.97 0.005 15);
 
-    /* Neon violet primary + brand */
-    --primary: oklch(0.74 0.22 300);
+    /* 🔴 Red primary + brand (main accent) */
+    --primary: oklch(0.68 0.24 22);
     --primary-foreground: oklch(0.99 0 0);
-    --brand: oklch(0.74 0.22 300);
+    --brand: oklch(0.68 0.24 22);
     --brand-foreground: oklch(0.99 0 0);
 
-    --secondary: oklch(0.22 0.025 270 / 0.55);
-    --secondary-foreground: oklch(0.96 0.01 270);
-    --muted: oklch(0.22 0.02 270 / 0.45);
-    --muted-foreground: oklch(0.72 0.04 270);
-    --accent: oklch(0.28 0.06 295 / 0.55);
-    --accent-foreground: oklch(0.98 0 0);
+    --secondary: oklch(0.22 0.02 15 / 0.55);
+    --secondary-foreground: oklch(0.97 0.005 15);
+    --muted: oklch(0.22 0.015 15 / 0.45);
+    --muted-foreground: oklch(0.72 0.03 15);
+    --accent: oklch(0.32 0.14 22 / 0.55);
+    --accent-foreground: oklch(0.99 0 0);
 
-    /* Glow-tinted border + ring */
-    --border: oklch(0.85 0.06 295 / 0.14);
-    --input: oklch(0.3 0.03 270 / 0.5);
-    --ring: oklch(0.74 0.22 300 / 0.55);
+    /* Red-tinted glass border + ring */
+    --border: oklch(0.75 0.18 22 / 0.18);
+    --input: oklch(0.28 0.03 15 / 0.5);
+    --ring: oklch(0.68 0.24 22 / 0.6);
 
-    /* Sidebar: heavier glass */
-    --sidebar: oklch(0.16 0.025 270 / 0.72);
-    --sidebar-foreground: oklch(0.96 0.01 270);
-    --sidebar-primary: oklch(0.74 0.22 300);
+    /* Sidebar: heavier glass with red glow */
+    --sidebar: oklch(0.14 0.02 15 / 0.72);
+    --sidebar-foreground: oklch(0.97 0.005 15);
+    --sidebar-primary: oklch(0.68 0.24 22);
     --sidebar-primary-foreground: oklch(0.99 0 0);
-    --sidebar-accent: oklch(0.28 0.06 295 / 0.5);
-    --sidebar-accent-foreground: oklch(0.98 0 0);
-    --sidebar-border: oklch(0.85 0.06 295 / 0.12);
-    --sidebar-ring: oklch(0.74 0.22 300 / 0.5);
+    --sidebar-accent: oklch(0.32 0.14 22 / 0.5);
+    --sidebar-accent-foreground: oklch(0.99 0 0);
+    --sidebar-border: oklch(0.75 0.18 22 / 0.15);
+    --sidebar-ring: oklch(0.68 0.24 22 / 0.55);
 
-    /* Vivid intents (neon) */
+    /* Intents kept distinct from red primary */
     --success: oklch(0.76 0.18 155);
     --warning: oklch(0.82 0.17 85);
     --info: oklch(0.72 0.22 220);
-    --destructive: oklch(0.7 0.25 22);
+    --destructive: oklch(0.68 0.25 18);
     --priority: oklch(0.75 0.2 45);
 
-    /* Chart neon palette */
-    --chart-1: oklch(0.74 0.22 300);
-    --chart-2: oklch(0.72 0.22 220);
-    --chart-3: oklch(0.7 0.24 340);
-    --chart-4: oklch(0.78 0.2 160);
-    --chart-5: oklch(0.82 0.17 85);
+    /* 📊 Bright chart palette — high contrast on dark glass */
+    --chart-1: oklch(0.72 0.24 22);     /* red (primary) */
+    --chart-2: oklch(0.78 0.20 55);     /* orange */
+    --chart-3: oklch(0.85 0.17 85);     /* amber/gold */
+    --chart-4: oklch(0.72 0.22 340);    /* magenta */
+    --chart-5: oklch(0.75 0.20 220);    /* cyan accent */
 
-    --scrollbar-thumb: oklch(0.74 0.15 300 / 0.22);
-    --scrollbar-thumb-hover: oklch(0.74 0.18 300 / 0.45);
+    --scrollbar-thumb: oklch(0.72 0.18 22 / 0.28);
+    --scrollbar-thumb-hover: oklch(0.72 0.22 22 / 0.55);
     --scrollbar-track: transparent;
 
     /* Slightly tighter radius for Raycast feel */
@@ -211,4 +211,97 @@
 .dark :focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary) 70%, transparent);
     outline-offset: 2px;
+}
+
+/* =============================================================================
+ * Shimmering laser border — rotates around interactive edges on hover/focus.
+ * Implementation: a pseudo-element with a conic-gradient that traces the
+ * element outline, animated via @property on --shimmer-angle. The gradient
+ * is masked into a ring using composite: exclude (hollow out inner rect).
+ * Browsers without @property support fall back to a static gradient edge.
+ * ============================================================================= */
+@property --shimmer-angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes shimmer-spin {
+    to { --shimmer-angle: 360deg; }
+}
+
+.dark button[data-slot="button"],
+.dark [role="button"],
+.dark [data-slot="menu-button"],
+.dark a[class*="button"] {
+    position: relative;
+    isolation: isolate;
+}
+
+.dark button[data-slot="button"]::before,
+.dark [role="button"]::before,
+.dark [data-slot="menu-button"]::before,
+.dark a[class*="button"]::before {
+    content: "";
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+        from var(--shimmer-angle),
+        transparent 0deg,
+        color-mix(in oklab, var(--primary) 85%, white) 20deg,
+        color-mix(in oklab, var(--primary) 65%, transparent) 45deg,
+        transparent 80deg,
+        transparent 360deg
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 180ms ease-out;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.dark button[data-slot="button"]:hover::before,
+.dark button[data-slot="button"]:focus-visible::before,
+.dark button[data-slot="button"][data-state="open"]::before,
+.dark [role="button"]:hover::before,
+.dark [role="button"]:focus-visible::before,
+.dark [data-slot="menu-button"]:hover::before,
+.dark [data-slot="menu-button"][data-popup-open]::before,
+.dark a[class*="button"]:hover::before,
+.dark a[class*="button"]:focus-visible::before {
+    opacity: 1;
+    animation: shimmer-spin 2.4s linear infinite;
+}
+
+/* Give buttons a subtle ambient red halo even at rest so they feel alive */
+.dark button[data-slot="button"][data-variant="default"],
+.dark [role="button"][data-variant="default"] {
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--primary) 35%, transparent),
+        0 12px 36px -12px color-mix(in oklab, var(--primary) 65%, transparent);
+}
+
+.dark button[data-slot="button"][data-variant="default"]:hover,
+.dark [role="button"][data-variant="default"]:hover {
+    box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--primary) 60%, transparent),
+        0 0 24px -4px color-mix(in oklab, var(--primary) 70%, transparent),
+        0 20px 44px -12px color-mix(in oklab, var(--primary) 85%, transparent);
+}
+
+/* Inputs: glowing ring while focused */
+.dark input:focus-visible,
+.dark textarea:focus-visible {
+    box-shadow:
+        0 0 0 2px color-mix(in oklab, var(--primary) 55%, transparent),
+        0 0 18px -2px color-mix(in oklab, var(--primary) 40%, transparent);
 }
