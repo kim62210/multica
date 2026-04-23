@@ -4,11 +4,13 @@ import { createContext, useContext, useState, useCallback, useMemo } from "react
 import { useConfigStore } from "@multica/core/config";
 import { createEnDict } from "./en";
 import { createZhDict } from "./zh";
+import { createKoDict } from "./ko";
 import type { LandingDict, Locale } from "./types";
 
 const dictionaryFactories: Record<Locale, (allowSignup: boolean) => LandingDict> = {
   en: createEnDict,
   zh: createZhDict,
+  ko: createKoDict,
 };
 
 const COOKIE_NAME = "multica-locale";

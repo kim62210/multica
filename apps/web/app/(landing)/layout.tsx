@@ -44,11 +44,12 @@ async function getInitialLocale(): Promise<Locale> {
   // 1. User's explicit preference (cookie set when they switch language)
   const cookieStore = await cookies();
   const stored = cookieStore.get("multica-locale")?.value;
-  if (stored === "en" || stored === "zh") return stored;
+  if (stored === "en" || stored === "zh" || stored === "ko") return stored;
 
   // 2. Detect from Accept-Language header
   const headersList = await headers();
   const acceptLang = headersList.get("accept-language") ?? "";
+  if (acceptLang.includes("ko")) return "ko";
   if (acceptLang.includes("zh")) return "zh";
 
   return "en";

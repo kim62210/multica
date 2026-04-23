@@ -11,8 +11,8 @@ export function LocaleSync() {
   useEffect(() => {
     const match = document.cookie.match(/(?:^|;\s*)multica-locale=(\w+)/);
     const locale = match?.[1];
-    if (locale === "zh") {
-      document.documentElement.lang = "zh";
+    if (locale === "zh" || locale === "ko") {
+      document.documentElement.lang = locale;
     }
   }, []);
 
