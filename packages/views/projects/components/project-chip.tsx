@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { projectListOptions, projectDetailOptions } from "@multica/core/projects/queries";
 import { useWorkspaceId } from "@multica/core/hooks";
+import { useI18n } from "../../i18n";
 
 /**
  * Compact presentational representation of a project —
@@ -31,6 +32,7 @@ export function ProjectChip({
   className,
 }: ProjectChipProps) {
   const wsId = useWorkspaceId();
+  const { t } = useI18n();
   const { data: projects = [] } = useQuery(projectListOptions(wsId));
   const listProject = projects.find((p) => p.id === projectId);
 
@@ -47,7 +49,7 @@ export function ProjectChip({
       <span className={cls}>
         <span className="shrink-0">📁</span>
         <span className="text-muted-foreground truncate">
-          {fallbackLabel ?? "Project"}
+          {fallbackLabel ?? t("projects.fallbackLabel")}
         </span>
       </span>
     );

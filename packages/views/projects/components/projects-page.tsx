@@ -36,20 +36,22 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/
 import type { Project, ProjectStatus, ProjectPriority, UpdateProjectRequest } from "@multica/core/types";
 import { PageHeader } from "../../layout/page-header";
 import { PriorityIcon } from "../../issues/components/priority-icon";
+import { useI18n } from "../../i18n";
 
-function formatRelativeDate(date: string): string {
+function formatRelativeDate(date: string, t: (key: string, values?: Record<string, string | number>) => string): string {
   const diff = Date.now() - new Date(date).getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days < 1) return "Today";
-  if (days === 1) return "1d ago";
-  if (days < 30) return `${days}d ago`;
+  if (days < 1) return t("projects.relativeDate.today");
+  if (days === 1) return t("projects.relativeDate.yesterday");
+  if (days < 30) return t("projects.relativeDate.daysAgo", { days });
   const months = Math.floor(days / 30);
-  return `${months}mo ago`;
+  return t("projects.relativeDate.monthsAgo", { months });
 }
 
 function ProjectRow({ project }: { project: Project }) {
   const wsId = useWorkspaceId();
   const wsPaths = useWorkspacePaths();
+  const { t } = useI18n();
   const statusCfg = PROJECT_STATUS_CONFIG[project.status];
   const priorityCfg = PROJECT_PRIORITY_CONFIG[project.priority];
   const updateProject = useUpdateProject();
@@ -87,7 +89,7 @@ function ProjectRow({ project }: { project: Project }) {
           render={
             <button type="button" className="flex w-24 items-center justify-center gap-1 shrink-0 rounded px-1 py-0.5 hover:bg-accent/60 transition-colors cursor-pointer">
               <PriorityIcon priority={project.priority} />
-              <span className={cn("text-xs", priorityCfg.color)}>{priorityCfg.label}</span>
+              <span className={cn("text-xs", priorityCfg.color)}>{t(`projects.priority.${project.priority}`)}</span>
             </button>
           }
         />
@@ -95,7 +97,7 @@ function ProjectRow({ project }: { project: Project }) {
           {PROJECT_PRIORITY_ORDER.map((p) => (
             <DropdownMenuItem key={p} onClick={() => handleUpdate({ priority: p as ProjectPriority })}>
               <PriorityIcon priority={p} />
-              <span>{PROJECT_PRIORITY_CONFIG[p].label}</span>
+              <span>{t(`projects.priority.${p}`)}</span>
               {p === project.priority && <Check className="ml-auto h-3.5 w-3.5" />}
             </DropdownMenuItem>
           ))}
@@ -110,7 +112,7 @@ function ProjectRow({ project }: { project: Project }) {
               "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium shrink-0 w-28 justify-center cursor-pointer hover:opacity-80 transition-opacity",
               statusCfg.badgeBg, statusCfg.badgeText,
             )}>
-              {statusCfg.label}
+              {t(`projects.status.${project.status}`)}
             </button>
           }
         />
@@ -118,7 +120,7 @@ function ProjectRow({ project }: { project: Project }) {
           {PROJECT_STATUS_ORDER.map((s) => (
             <DropdownMenuItem key={s} onClick={() => handleUpdate({ status: s as ProjectStatus })}>
               <span className={cn("size-2 rounded-full", PROJECT_STATUS_CONFIG[s].dotColor)} />
-              <span>{PROJECT_STATUS_CONFIG[s].label}</span>
+              <span>{t(`projects.status.${s}`)}</span>
               {s === project.status && <Check className="ml-auto h-3.5 w-3.5" />}
             </DropdownMenuItem>
           ))}
@@ -166,7 +168,7 @@ function ProjectRow({ project }: { project: Project }) {
               type="text"
               value={leadFilter}
               onChange={(e) => setLeadFilter(e.target.value)}
-              placeholder="Assign lead..."
+              placeholder={t("projects.lead.placeholder")}
               className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none"
             />
           </div>
@@ -177,11 +179,11 @@ function ProjectRow({ project }: { project: Project }) {
               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
             >
               <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-muted-foreground">No lead</span>
+              <span className="text-muted-foreground">{t("projects.lead.none")}</span>
             </button>
             {filteredMembers.length > 0 && (
               <>
-                <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">Members</div>
+                <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("projects.lead.membersSection")}</div>
                 {filteredMembers.map((m) => (
                   <button
                     type="button"
@@ -197,7 +199,7 @@ function ProjectRow({ project }: { project: Project }) {
             )}
             {filteredAgents.length > 0 && (
               <>
-                <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">Agents</div>
+                <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("projects.lead.agentsSection")}</div>
                 {filteredAgents.map((a) => (
                   <button
                     type="button"
@@ -212,7 +214,7 @@ function ProjectRow({ project }: { project: Project }) {
               </>
             )}
             {filteredMembers.length === 0 && filteredAgents.length === 0 && leadFilter && (
-              <div className="px-2 py-3 text-center text-sm text-muted-foreground">No results</div>
+              <div className="px-2 py-3 text-center text-sm text-muted-foreground">{t("projects.lead.noResults")}</div>
             )}
           </div>
         </PopoverContent>
@@ -220,7 +222,7 @@ function ProjectRow({ project }: { project: Project }) {
 
       {/* Created */}
       <span className="w-20 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
-        {formatRelativeDate(project.created_at)}
+        {formatRelativeDate(project.created_at, t)}
       </span>
     </div>
   );
@@ -229,6 +231,7 @@ function ProjectRow({ project }: { project: Project }) {
 
 export function ProjectsPage() {
   const wsId = useWorkspaceId();
+  const { t } = useI18n();
   const { data: projects = [], isLoading } = useQuery(projectListOptions(wsId));
   const openCreateProject = () => useModalStore.getState().open("create-project");
 
@@ -238,14 +241,14 @@ export function ProjectsPage() {
       <PageHeader className="justify-between px-5">
         <div className="flex items-center gap-2">
           <FolderKanban className="h-4 w-4 text-muted-foreground" />
-          <h1 className="text-sm font-medium">Projects</h1>
+          <h1 className="text-sm font-medium">{t("projects.page.title")}</h1>
           {!isLoading && projects.length > 0 && (
             <span className="text-xs text-muted-foreground tabular-nums">{projects.length}</span>
           )}
         </div>
         <Button size="sm" variant="outline" onClick={openCreateProject}>
           <Plus className="h-3.5 w-3.5 mr-1" />
-          New project
+          {t("projects.page.newProject")}
         </Button>
       </PageHeader>
 
@@ -271,9 +274,9 @@ export function ProjectsPage() {
         ) : projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
             <FolderKanban className="h-10 w-10 mb-3 opacity-30" />
-            <p className="text-sm">No projects yet</p>
+            <p className="text-sm">{t("projects.page.emptyTitle")}</p>
             <Button size="sm" variant="outline" className="mt-3" onClick={openCreateProject}>
-              Create your first project
+              {t("projects.page.createFirst")}
             </Button>
           </div>
         ) : (
@@ -282,12 +285,12 @@ export function ProjectsPage() {
             <div className="sticky top-0 z-[1] flex h-8 items-center gap-2 border-b bg-muted/30 px-5 text-xs font-medium text-muted-foreground">
               {/* Icon spacer + Name */}
               <span className="shrink-0 w-[24px]" />
-              <span className="min-w-0 flex-1">Name</span>
-              <span className="w-24 text-center shrink-0">Priority</span>
-              <span className="w-28 text-center shrink-0">Status</span>
-              <span className="w-24 text-center shrink-0">Progress</span>
-              <span className="w-10 text-center shrink-0">Lead</span>
-              <span className="w-20 text-right shrink-0">Created</span>
+              <span className="min-w-0 flex-1">{t("projects.column.name")}</span>
+              <span className="w-24 text-center shrink-0">{t("projects.column.priority")}</span>
+              <span className="w-28 text-center shrink-0">{t("projects.column.status")}</span>
+              <span className="w-24 text-center shrink-0">{t("projects.column.progress")}</span>
+              <span className="w-10 text-center shrink-0">{t("projects.column.lead")}</span>
+              <span className="w-20 text-right shrink-0">{t("projects.column.created")}</span>
             </div>
             {/* Rows */}
             {projects.map((project) => (
