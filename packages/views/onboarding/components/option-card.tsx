@@ -2,6 +2,7 @@
 
 import { Input } from "@multica/ui/components/ui/input";
 import { cn } from "@multica/ui/lib/utils";
+import { useI18n } from "@multica/views/i18n";
 
 const OTHER_INPUT_MAX_LENGTH = 80;
 
@@ -64,6 +65,7 @@ export function OtherOptionCard({
   onOtherChange: (value: string) => void;
   placeholder: string;
 }) {
+  const { t } = useI18n();
   return (
     <div
       className={cn(
@@ -82,7 +84,7 @@ export function OtherOptionCard({
       >
         <RadioMark selected={selected} />
         <span className="text-[14.5px] font-normal leading-tight text-foreground">
-          Other
+          {t("onboarding.common.other")}
         </span>
       </button>
       {selected && (

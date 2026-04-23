@@ -9,6 +9,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { DragStrip } from "@multica/views/platform";
 import { STATUS_CONFIG } from "@multica/core/issues/config";
 import type { IssueStatus } from "@multica/core/types";
+import { useI18n } from "@multica/views/i18n";
 import { StatusIcon } from "../../issues/components/status-icon";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
@@ -45,6 +46,7 @@ export function StepWelcome({
   onSkip?: () => void | Promise<void>;
   isWeb?: boolean;
 }) {
+  const { t } = useI18n();
   // Tracks which button is mid-flight so we can show a per-button
   // spinner and disable both while one is in progress.
   const [pending, setPending] = useState<"next" | "skip" | null>(null);
@@ -79,30 +81,27 @@ export function StepWelcome({
             <div className="flex items-center gap-2.5">
               <MulticaIcon className="size-5 text-foreground" noSpin />
               <span className="font-serif text-xl font-medium tracking-tight">
-                Welcome to Multica
+                {t("onboarding.welcome.brand")}
               </span>
             </div>
 
             <h1 className="text-balance font-serif text-5xl font-medium leading-[1.04] tracking-tight sm:text-6xl">
-              Your AI teammates,
+              {t("onboarding.welcome.headlineA")}
               <br />
-              in <em className="italic text-brand">one workspace.</em>
+              {t("onboarding.welcome.headlineB")}{" "}
+              <em className="italic text-brand">
+                {t("onboarding.welcome.headlineEm")}
+              </em>
             </h1>
 
             <div className="flex flex-col gap-4">
               <p className="text-lg leading-relaxed text-foreground/85">
-                Assign them work like you&apos;d assign a colleague — they
-                pick it up, update status, and comment when done.
+                {t("onboarding.welcome.lede")}
               </p>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {isWeb ? (
-                  <>
-                    Desktop bundles the runtime — nothing to install.
-                    Continue on web to connect your own CLI.
-                  </>
-                ) : (
-                  "By the end, a real agent will be replying to your first issue."
-                )}
+                {isWeb
+                  ? t("onboarding.welcome.subLedeWeb")
+                  : t("onboarding.welcome.subLedeDesktop")}
               </p>
             </div>
 
@@ -124,7 +123,7 @@ export function StepWelcome({
                     className={buttonVariants({ size: "lg" })}
                   >
                     <Download className="h-4 w-4" />
-                    Download Desktop
+                    {t("onboarding.welcome.downloadDesktop")}
                   </a>
                   <Button
                     size="lg"
@@ -135,7 +134,7 @@ export function StepWelcome({
                     {pending === "next" && (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     )}
-                    Continue on web
+                    {t("onboarding.welcome.continueOnWeb")}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </>
@@ -148,7 +147,7 @@ export function StepWelcome({
                   {pending === "next" && (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   )}
-                  Start exploring
+                  {t("onboarding.welcome.startExploring")}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               )}
@@ -162,7 +161,7 @@ export function StepWelcome({
                   {pending === "skip" && (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   )}
-                  I&apos;ve done this before
+                  {t("onboarding.welcome.doneBefore")}
                 </Button>
               )}
             </div>
@@ -180,8 +179,7 @@ export function StepWelcome({
         <DragStrip />
         <div className="flex flex-1 flex-col items-center justify-center gap-7 px-8 py-8">
           <p className="max-w-[440px] text-balance text-center font-serif text-[15px] italic leading-snug text-muted-foreground">
-            Every issue, every thread, every decision — shared by your team and
-            agents.
+            {t("onboarding.welcome.illustrationCaption")}
           </p>
           <WelcomeIllustration />
         </div>

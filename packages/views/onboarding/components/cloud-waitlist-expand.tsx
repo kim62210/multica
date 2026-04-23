@@ -8,6 +8,7 @@ import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
 import { Textarea } from "@multica/ui/components/ui/textarea";
 import { joinCloudWaitlist } from "@multica/core/onboarding";
+import { useI18n } from "@multica/views/i18n";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const REASON_MAX = 500;
@@ -29,6 +30,7 @@ export function CloudWaitlistExpand({
   submitted: boolean;
   onSubmitted: () => void;
 }) {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [reason, setReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -44,13 +46,13 @@ export function CloudWaitlistExpand({
     setSubmitting(true);
     try {
       await joinCloudWaitlist(email.trim(), reason.trim());
-      toast.success(
-        "You're on the list. We'll email when cloud runtimes are live.",
-      );
+      toast.success(t("onboarding.waitlist.successToast"));
       onSubmitted();
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to join waitlist",
+        err instanceof Error
+          ? err.message
+          : t("onboarding.waitlist.errorToast"),
       );
     } finally {
       setSubmitting(false);
@@ -60,12 +62,9 @@ export function CloudWaitlistExpand({
   return (
     <div className="flex flex-col gap-4 rounded-lg border bg-muted/40 p-5">
       <p className="text-[13.5px] leading-[1.55] text-foreground/85">
-        Cloud runtimes aren&apos;t live yet. Leave your email and we&apos;ll
-        reach out when they are.{" "}
+        {t("onboarding.waitlist.leadPart1")}{" "}
         <span className="text-foreground/70">
-          Heads-up: agents can&apos;t execute tasks without a runtime — if
-          you hit Skip now, your workspace is read-only until you come back
-          and install one.
+          {t("onboarding.waitlist.leadPart2")}
         </span>
       </p>
 
@@ -74,7 +73,7 @@ export function CloudWaitlistExpand({
           htmlFor="waitlist-email"
           className="text-xs font-medium text-muted-foreground"
         >
-          Email
+          {t("onboarding.waitlist.emailLabel")}
         </Label>
         <Input
           id="waitlist-email"
@@ -82,7 +81,7 @@ export function CloudWaitlistExpand({
           autoComplete="email"
           value={email}
           disabled={submitted}
-          placeholder="you@work.com"
+          placeholder={t("onboarding.waitlist.emailPlaceholder")}
           onChange={(e) => setEmail(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
@@ -98,9 +97,9 @@ export function CloudWaitlistExpand({
           htmlFor="waitlist-reason"
           className="text-xs font-medium text-muted-foreground"
         >
-          Why cloud?
+          {t("onboarding.waitlist.reasonLabel")}
           <span className="ml-2 font-normal text-muted-foreground/70">
-            Optional
+            {t("onboarding.waitlist.reasonOptional")}
           </span>
         </Label>
         <Textarea
@@ -108,7 +107,7 @@ export function CloudWaitlistExpand({
           value={reason}
           disabled={submitted}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="e.g. we want agents running 24/7, or my team works across different devices."
+          placeholder={t("onboarding.waitlist.reasonPlaceholder")}
           rows={3}
           maxLength={REASON_MAX}
         />
@@ -120,11 +119,11 @@ export function CloudWaitlistExpand({
           {submitted ? (
             <>
               <Check className="h-4 w-4" />
-              You&apos;re on the list
+              {t("onboarding.waitlist.onTheList")}
             </>
           ) : (
             <>
-              Join waitlist
+              {t("onboarding.runtime.joinWaitlist")}
               <ArrowRight className="h-4 w-4" />
             </>
           )}

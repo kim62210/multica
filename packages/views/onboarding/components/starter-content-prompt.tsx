@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@multica/ui/components/ui/dialog";
+import { useI18n } from "@multica/views/i18n";
 import { buildImportPayload } from "../utils/starter-content-templates";
 
 /**
@@ -39,6 +40,7 @@ import { buildImportPayload } from "../utils/starter-content-templates";
  * no client-side cache timing, no stale decisions, no Unknown bugs.
  */
 export function StarterContentPrompt() {
+  const { t } = useI18n();
   const workspace = useCurrentWorkspace();
   const user = useAuthStore((s) => s.user);
   const refreshMe = useAuthStore((s) => s.refreshMe);
@@ -84,7 +86,7 @@ export function StarterContentPrompt() {
       // component unmounts cleanly on the next render.
       await refreshMe();
 
-      toast.success("Starter tasks added — check your sidebar");
+      toast.success(t("onboarding.starter.importSuccessToast"));
 
       // If the server took the agent-guided branch, a welcome issue
       // exists and we jump to it. Otherwise, stay on the issues list —
@@ -96,7 +98,9 @@ export function StarterContentPrompt() {
       }
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Import failed — please retry",
+        err instanceof Error
+          ? err.message
+          : t("onboarding.starter.importFailedToast"),
       );
       setSubmitting(null);
     }
@@ -112,7 +116,7 @@ export function StarterContentPrompt() {
       toast.error(
         err instanceof Error
           ? err.message
-          : "Could not dismiss — please retry",
+          : t("onboarding.starter.dismissFailedToast"),
       );
       setSubmitting(null);
     }
@@ -132,15 +136,14 @@ export function StarterContentPrompt() {
       <DialogContent showCloseButton={false} className="sm:max-w-[440px]">
         <DialogHeader>
           <DialogTitle className="text-balance font-serif text-[22px] leading-[1.2] font-medium tracking-tight">
-            Welcome — add starter tasks?
+            {t("onboarding.starter.title")}
           </DialogTitle>
           <DialogDescription className="pt-2 text-[14px] leading-[1.55]">
-            A{" "}
+            {t("onboarding.starter.descLead")}{" "}
             <span className="font-medium text-foreground">
-              Getting Started
+              {t("onboarding.starter.gettingStarted")}
             </span>{" "}
-            project with short tasks that walk through how agents, issues,
-            and context work in Multica.
+            {t("onboarding.starter.descTail")}
           </DialogDescription>
         </DialogHeader>
 
@@ -153,13 +156,13 @@ export function StarterContentPrompt() {
             {submitting === "dismiss" && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Start blank workspace
+            {t("onboarding.starter.startBlank")}
           </Button>
           <Button onClick={onImport} disabled={submitting !== null}>
             {submitting === "import" && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Add starter tasks
+            {t("onboarding.starter.addStarter")}
           </Button>
         </DialogFooter>
       </DialogContent>

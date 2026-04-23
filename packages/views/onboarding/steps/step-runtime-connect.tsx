@@ -15,6 +15,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
 import type { AgentRuntime } from "@multica/core/types";
 import { DragStrip } from "@multica/views/platform";
+import { useI18n } from "@multica/views/i18n";
 import { StepHeader } from "../components/step-header";
 import { RuntimeAsidePanel } from "../components/runtime-aside-panel";
 import { useRuntimePicker } from "../components/use-runtime-picker";
@@ -93,6 +94,7 @@ function FancyView({
   onBack?: () => void;
   onWaitlistSubmitted?: () => void;
 }) {
+  const { t } = useI18n();
   const mainRef = useRef<HTMLElement>(null);
   const fadeStyle = useScrollFade(mainRef);
 
@@ -145,14 +147,14 @@ function FancyView({
 
   const footerHint =
     phase === "found" && selected
-      ? `Selected: ${selected.name}`
+      ? t("onboarding.runtime.hintSelected", { name: selected.name })
       : phase === "found"
-        ? "Pick a runtime above to continue."
+        ? t("onboarding.runtime.hintPick")
         : phase === "scanning"
-          ? "Waiting for the first result…"
+          ? t("onboarding.runtime.hintWaitingFirst")
           : waitlistSubmitted
-            ? "You're on the waitlist — skip to keep exploring."
-            : "Skip to enter your workspace, or join the cloud waitlist above.";
+            ? t("onboarding.runtime.hintOnWaitlist")
+            : t("onboarding.runtime.hintEmptyExit");
 
   return (
     <div className="animate-onboarding-enter grid h-full min-h-0 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_480px]">
@@ -169,7 +171,7 @@ function FancyView({
               className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              Back
+              {t("onboarding.common.back")}
             </button>
           ) : (
             <span aria-hidden className="w-0" />
@@ -233,7 +235,7 @@ function FancyView({
             disabled={submitting}
             onClick={handleSkip}
           >
-            Skip for now
+            {t("onboarding.common.skipForNow")}
           </Button>
           <Button
             size="lg"
@@ -241,7 +243,7 @@ function FancyView({
             onClick={handleContinue}
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Continue
+            {t("onboarding.common.continue")}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </footer>
@@ -264,18 +266,18 @@ function FancyView({
 // ------------------------------------------------------------
 
 function ScanningView() {
+  const { t } = useI18n();
   return (
     <div>
       <h1 className="text-balance font-serif text-[36px] font-medium leading-[1.1] tracking-tight text-foreground">
-        Looking for your tools…
+        {t("onboarding.runtime.scanningTitle")}
       </h1>
       <p className="mt-4 max-w-[560px] text-[15.5px] leading-[1.55] text-muted-foreground">
-        Multica drives local AI coding tools like{" "}
+        {t("onboarding.runtime.scanningIntro")}{" "}
         <span className="font-medium text-foreground">Claude Code</span>,{" "}
         <span className="font-medium text-foreground">Codex</span>,{" "}
-        <span className="font-medium text-foreground">Cursor</span>, and
-        others. We&apos;re waiting to hear back from your machine about
-        which ones are installed.
+        <span className="font-medium text-foreground">Cursor</span>
+        {t("onboarding.runtime.scanningOutro")}
       </p>
       <div className="mt-10 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
         <SkeletonRuntimeCard />
@@ -296,30 +298,30 @@ function FoundView({
   onSelect: (id: string) => void;
   onlineCount: number;
 }) {
+  const { t } = useI18n();
   const total = runtimes.length;
   const statusLabel =
     onlineCount === total
-      ? "all online"
+      ? t("onboarding.runtime.allOnline")
       : onlineCount === 0
-        ? "none online"
-        : `${onlineCount} online`;
+        ? t("onboarding.runtime.noneOnline")
+        : t("onboarding.runtime.someOnline", { count: onlineCount });
   const statusTone =
     onlineCount === 0 ? "text-muted-foreground" : "text-success";
 
   return (
     <div>
       <h1 className="text-balance font-serif text-[36px] font-medium leading-[1.1] tracking-tight text-foreground">
-        We found your runtimes.
+        {t("onboarding.runtime.foundTitle")}
       </h1>
       <p className="mt-4 max-w-[560px] text-[15.5px] leading-[1.55] text-muted-foreground">
-        We scanned your machine for AI coding tools you&apos;ve already
-        set up. Pick one for your first agent.
+        {t("onboarding.runtime.foundDesc")}
       </p>
 
       {/* Summary strip — trust signal ("we really did scan") */}
       <div className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg bg-muted/60 px-4 py-2.5 text-xs">
         <span className="font-semibold text-foreground">
-          {total} runtime{total === 1 ? "" : "s"}
+          {t("onboarding.runtime.runtimeCount", { count: total })}
         </span>
         <span className="text-muted-foreground">·</span>
         <span className={cn("flex items-center gap-1", statusTone)}>
@@ -357,6 +359,7 @@ function EmptyView({
   onWaitlistSubmitted: () => void;
   onSkip: () => void;
 }) {
+  const { t } = useI18n();
   // Two exits: "Skip for now" (enter the workspace in read-only mode)
   // or "Join waitlist" (capture interest in the hosted runtime we
   // haven't shipped yet). We deliberately don't link out to Claude
@@ -368,29 +371,32 @@ function EmptyView({
   return (
     <div>
       <h1 className="text-balance font-serif text-[36px] font-medium leading-[1.1] tracking-tight text-foreground">
-        No supported tools detected.
+        {t("onboarding.runtime.emptyTitle")}
       </h1>
       <p className="mt-4 max-w-[560px] text-[15.5px] leading-[1.55] text-muted-foreground">
-        Multica drives local AI coding tools like{" "}
+        {t("onboarding.runtime.emptyIntro")}{" "}
         <span className="font-medium text-foreground">Claude Code</span>,{" "}
         <span className="font-medium text-foreground">Codex</span>,{" "}
-        <span className="font-medium text-foreground">Cursor</span>, and
-        others — we didn&apos;t find any on this machine. Install one and
-        come back, or pick a path below.
+        <span className="font-medium text-foreground">Cursor</span>
+        {t("onboarding.runtime.emptyOutro")}
       </p>
 
       <div className="mt-10 flex flex-col gap-3.5">
         <EmptyCard
-          title="Skip for now"
-          subtitle="Enter your workspace in read-only mode. Agents can't execute tasks until a runtime connects — but you can still browse, plan, and invite teammates."
-          actionLabel="Skip"
+          title={t("onboarding.runtime.emptySkipTitle")}
+          subtitle={t("onboarding.runtime.emptySkipSub")}
+          actionLabel={t("onboarding.common.skip")}
           onAction={onSkip}
         />
 
         <EmptyCard
-          title="Join the cloud runtime waitlist"
-          subtitle="We'll host the runtime for you — no local install, no setup. Not live yet; click to leave your email and get notified."
-          actionLabel={waitlistSubmitted ? "On the waitlist" : "Join waitlist"}
+          title={t("onboarding.runtime.emptyWaitlistTitle")}
+          subtitle={t("onboarding.runtime.emptyWaitlistSub")}
+          actionLabel={
+            waitlistSubmitted
+              ? t("onboarding.runtime.onWaitlist")
+              : t("onboarding.runtime.joinWaitlist")
+          }
           onAction={() => setWaitlistOpen(true)}
         />
       </div>
@@ -401,10 +407,9 @@ function EmptyView({
       >
         <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-[520px]">
           <DialogHeader>
-            <DialogTitle>Join the cloud runtime waitlist</DialogTitle>
+            <DialogTitle>{t("onboarding.runtime.waitlistDialogTitle")}</DialogTitle>
             <DialogDescription>
-              Cloud runtimes aren&apos;t live yet. Leave your email and
-              we&apos;ll email you when they are.
+              {t("onboarding.runtime.waitlistDialogDesc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -417,7 +422,9 @@ function EmptyView({
 
           <DialogFooter>
             <Button variant="ghost" onClick={() => setWaitlistOpen(false)}>
-              {waitlistSubmitted ? "Close" : "Cancel"}
+              {waitlistSubmitted
+                ? t("onboarding.common.close")
+                : t("onboarding.common.cancel")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -478,6 +485,7 @@ function RuntimeCard({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useI18n();
   const online = runtime.status === "online";
 
   return (
@@ -508,7 +516,9 @@ function RuntimeCard({
             )}
             aria-hidden
           />
-          {online ? "online" : "offline"}
+          {online
+            ? t("onboarding.runtime.statusOnline")
+            : t("onboarding.runtime.statusOffline")}
         </div>
       </div>
       <RadioMark selected={selected} />

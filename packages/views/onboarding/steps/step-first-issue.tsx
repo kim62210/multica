@@ -8,6 +8,7 @@ import {
   completeOnboarding,
   type OnboardingCompletionPath,
 } from "@multica/core/onboarding";
+import { useI18n } from "@multica/views/i18n";
 
 /**
  * Step 5 — the final onboarding beat.
@@ -38,6 +39,7 @@ export function StepFirstIssue({
    *  both in scope. */
   completionPath: OnboardingCompletionPath;
 }) {
+  const { t } = useI18n();
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
   const started = useRef(false);
@@ -45,6 +47,9 @@ export function StepFirstIssue({
   onFinishedRef.current = onFinished;
   const completionPathRef = useRef(completionPath);
   completionPathRef.current = completionPath;
+
+  const tRef = useRef(t);
+  tRef.current = t;
 
   useEffect(() => {
     if (started.current) return;
@@ -55,7 +60,9 @@ export function StepFirstIssue({
         onFinishedRef.current();
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Failed to finish onboarding",
+          err instanceof Error
+            ? err.message
+            : tRef.current("onboarding.firstIssue.finishFailed"),
         );
       }
     })();
@@ -69,8 +76,12 @@ export function StepFirstIssue({
       await completeOnboarding(completionPathRef.current);
       onFinishedRef.current();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Retry failed");
-      toast.error(err instanceof Error ? err.message : "Retry failed");
+      setError(
+        err instanceof Error ? err.message : t("onboarding.firstIssue.retryFailed"),
+      );
+      toast.error(
+        err instanceof Error ? err.message : t("onboarding.firstIssue.retryFailed"),
+      );
     } finally {
       setRetrying(false);
     }
@@ -84,13 +95,13 @@ export function StepFirstIssue({
         </div>
         <div className="flex flex-col gap-2">
           <h1 className="text-2xl font-semibold tracking-tight">
-            Something went wrong
+            {t("onboarding.firstIssue.errorTitle")}
           </h1>
           <p className="text-sm text-muted-foreground">{error}</p>
         </div>
         <Button onClick={retry} disabled={retrying}>
           {retrying && <Loader2 className="h-4 w-4 animate-spin" />}
-          Retry
+          {t("onboarding.firstIssue.retry")}
         </Button>
       </div>
     );
@@ -101,10 +112,10 @@ export function StepFirstIssue({
       <Loader2 className="h-10 w-10 animate-spin text-primary" />
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Finishing up
+          {t("onboarding.firstIssue.title")}
         </h1>
         <p className="text-sm text-muted-foreground">
-          Almost there — opening your workspace.
+          {t("onboarding.firstIssue.desc")}
         </p>
       </div>
     </div>

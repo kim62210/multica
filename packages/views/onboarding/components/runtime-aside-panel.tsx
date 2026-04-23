@@ -1,3 +1,7 @@
+"use client";
+
+import { useI18n } from "@multica/views/i18n";
+
 /**
  * Shared right-rail aside for Step 3 (runtime).
  *
@@ -7,34 +11,36 @@
  * editorial shell's `<aside>` column.
  */
 export function RuntimeAsidePanel() {
+  const { t } = useI18n();
   return (
     <div className="flex flex-col gap-6">
       <section>
         <div className="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          What&apos;s a runtime?
+          {t("onboarding.runtimeAside.whatTitle")}
         </div>
         <p className="text-[14px] leading-[1.6] text-foreground/80">
-          A <strong className="font-medium text-foreground">runtime</strong>{" "}
-          is a small background process that runs on your machine. It
-          connects your workspace to AI coding tools like Claude Code or
-          Codex, and executes the tasks your agents pick up.
+          {t("onboarding.runtimeAside.whatIntro")}{" "}
+          <strong className="font-medium text-foreground">
+            {t("onboarding.runtimeAside.runtimeWord")}
+          </strong>{" "}
+          {t("onboarding.runtimeAside.whatBody")}
         </p>
       </section>
 
       <section>
         <div className="mb-3 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          Good to know
+          {t("onboarding.runtimeAside.goodTitle")}
         </div>
         <div className="flex flex-col gap-4">
           <AsideItem
             glyph="↻"
-            title="Swap anytime"
-            body="Each agent's runtime is just a setting. Change it whenever you want."
+            title={t("onboarding.runtimeAside.swapTitle")}
+            body={t("onboarding.runtimeAside.swapBody")}
           />
           <AsideItem
             glyph="∞"
-            title="Add more later"
-            body="You can connect a second runtime on another machine for a team, or a dedicated one per agent."
+            title={t("onboarding.runtimeAside.addMoreTitle")}
+            body={t("onboarding.runtimeAside.addMoreBody")}
           />
         </div>
       </section>

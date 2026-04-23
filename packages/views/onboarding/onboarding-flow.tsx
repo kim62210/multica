@@ -16,6 +16,7 @@ import {
 import { workspaceListOptions } from "@multica/core/workspace/queries";
 import type { Agent, AgentRuntime, Workspace } from "@multica/core/types";
 import { DragStrip } from "@multica/views/platform";
+import { useI18n } from "@multica/views/i18n";
 import { StepHeader } from "./components/step-header";
 import { StepWelcome } from "./steps/step-welcome";
 import { StepQuestionnaire } from "./steps/step-questionnaire";
@@ -55,6 +56,7 @@ export function OnboardingFlow({
   onComplete: (workspace?: Workspace) => void;
   runtimeInstructions?: React.ReactNode;
 }) {
+  const { t } = useI18n();
   const user = useAuthStore((s) => s.user);
   if (!user) {
     throw new Error("OnboardingFlow requires an authenticated user");
@@ -112,12 +114,14 @@ export function OnboardingFlow({
       await completeOnboarding("skip_existing");
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to finish onboarding",
+        err instanceof Error
+          ? err.message
+          : t("onboarding.firstIssue.finishFailed"),
       );
       return;
     }
     onComplete(workspaces[0] ?? undefined);
-  }, [workspaces, onComplete]);
+  }, [workspaces, onComplete, t]);
 
   const handleQuestionnaireSubmit = useCallback(
     async (answers: QuestionnaireAnswers) => {

@@ -18,6 +18,7 @@ import type {
   CreateAgentRequest,
 } from "@multica/core/types";
 import { DragStrip } from "@multica/views/platform";
+import { useI18n } from "@multica/views/i18n";
 import { StepHeader } from "../components/step-header";
 
 /**
@@ -106,6 +107,7 @@ export function StepAgent({
   onCreated: (agent: Agent) => void | Promise<void>;
   onBack?: () => void;
 }) {
+  const { t } = useI18n();
   const recommendedId = recommendTemplate(questionnaire);
   const recommended = TEMPLATE_BY_ID[recommendedId];
 
@@ -131,7 +133,9 @@ export function StepAgent({
       await onCreated(agent);
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to create agent",
+        err instanceof Error
+          ? err.message
+          : t("onboarding.agent.createFailedToast"),
       );
       setCreating(false);
     }
@@ -154,7 +158,7 @@ export function StepAgent({
               className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              Back
+              {t("onboarding.common.back")}
             </button>
           ) : (
             <span aria-hidden className="w-0" />
@@ -174,19 +178,17 @@ export function StepAgent({
         >
           <div className="mx-auto w-full max-w-[620px] px-6 py-10 sm:px-10 md:px-14 lg:px-0 lg:py-14">
             <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              Your first agent
+              {t("onboarding.agent.eyebrow")}
             </div>
             <h1 className="text-balance font-serif text-[36px] font-medium leading-[1.1] tracking-tight text-foreground">
-              Meet your first teammate.
+              {t("onboarding.agent.title")}
             </h1>
             <p className="mt-4 text-[15.5px] leading-[1.55] text-foreground/80">
-              Your answers point to a{" "}
+              {t("onboarding.agent.descLead")}{" "}
               <strong className="font-medium text-foreground">
                 {recommended.label}
               </strong>
-              . Pick whichever of the four fits you — each template ships
-              ready to take its first issue. You can retune its
-              instructions from the agent settings page later.
+              {t("onboarding.agent.descTail")}
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -208,11 +210,11 @@ export function StepAgent({
             the agent IS this step. */}
         <footer className="flex shrink-0 items-center justify-between gap-4 bg-background px-6 py-4 sm:px-10 md:px-14 lg:px-16">
           <span className="hidden text-xs text-muted-foreground sm:block">
-            One agent is enough to start. Add more from the sidebar later.
+            {t("onboarding.agent.footerHint")}
           </span>
           <Button size="lg" onClick={handleCreate} disabled={creating}>
             {creating && <Loader2 className="h-4 w-4 animate-spin" />}
-            Create {template.defaultName}
+            {t("onboarding.agent.createNamed", { name: template.defaultName })}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </footer>
@@ -240,6 +242,7 @@ function TemplateCard({
   recommended: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <button
       type="button"
@@ -262,7 +265,7 @@ function TemplateCard({
         </span>
         {recommended && (
           <span className="shrink-0 rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-brand">
-            Recommended
+            {t("onboarding.agent.recommended")}
           </span>
         )}
       </div>
@@ -279,53 +282,51 @@ function TemplateCard({
 }
 
 function AboutAgentsSide() {
+  const { t } = useI18n();
   return (
     <div className="flex max-w-[380px] flex-col gap-8">
       <section className="flex flex-col gap-4">
         <div className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          What&apos;s an agent
+          {t("onboarding.agent.aboutTitle")}
         </div>
         <h2 className="font-serif text-[22px] font-medium leading-[1.25] tracking-tight text-foreground">
-          An AI teammate that lives in your workspace.
+          {t("onboarding.agent.aboutHeadline")}
         </h2>
         <p className="text-[14px] leading-[1.6] text-foreground/80">
-          Agents show up in every assignee picker, just like any other
-          colleague — except they can work 24/7 on whatever runtime you
-          give them.
+          {t("onboarding.agent.aboutBody")}
         </p>
       </section>
 
       <section className="flex flex-col gap-4">
         <div className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          Ways to work with an agent
+          {t("onboarding.agent.waysTitle")}
         </div>
         <div className="flex flex-col gap-4">
           <WayItem
             glyph="→"
-            title="Assign it an issue"
-            body="It picks up the task and reports back in the thread."
+            title={t("onboarding.agent.way1Title")}
+            body={t("onboarding.agent.way1Body")}
           />
           <WayItem
             glyph="@"
-            title="@mention in a comment"
-            body="Pull it into a conversation for a quick take."
+            title={t("onboarding.agent.way2Title")}
+            body={t("onboarding.agent.way2Body")}
           />
           <WayItem
             glyph="◯"
-            title="Chat one-on-one"
-            body="Ask quick questions without creating an issue."
+            title={t("onboarding.agent.way3Title")}
+            body={t("onboarding.agent.way3Body")}
           />
           <WayItem
             glyph="↻"
-            title="Put it on Autopilot"
-            body="Daily triage, weekly digest, monthly audit — on a schedule."
+            title={t("onboarding.agent.way4Title")}
+            body={t("onboarding.agent.way4Body")}
           />
         </div>
       </section>
 
       <p className="text-[13px] leading-[1.55] text-muted-foreground">
-        Add more agents anytime. A small team of specialized agents beats
-        one jack-of-all-trades.
+        {t("onboarding.agent.aboutFooter")}
       </p>
     </div>
   );

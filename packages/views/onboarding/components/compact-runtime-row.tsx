@@ -1,5 +1,8 @@
+"use client";
+
 import { cn } from "@multica/ui/lib/utils";
 import type { AgentRuntime } from "@multica/core/types";
+import { useI18n } from "@multica/views/i18n";
 import { ProviderLogo } from "../../runtimes/components/provider-logo";
 
 /**
@@ -18,6 +21,7 @@ export function CompactRuntimeRow({
   selected: boolean;
   onSelect: () => void;
 }) {
+  const { t } = useI18n();
   const online = runtime.status === "online";
   return (
     <div
@@ -47,7 +51,11 @@ export function CompactRuntimeRow({
           "h-2 w-2 shrink-0 rounded-full",
           online ? "bg-success" : "bg-muted-foreground/40",
         )}
-        aria-label={online ? "Online" : "Offline"}
+        aria-label={
+          online
+            ? t("onboarding.runtime.ariaOnline")
+            : t("onboarding.runtime.ariaOffline")
+        }
       />
     </div>
   );

@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { Check, Copy, Terminal } from "lucide-react";
 import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { useI18n } from "@multica/views/i18n";
 
 const INSTALL_CMD =
   "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash";
 const SETUP_CMD = "multica setup";
 
 function CopyButton({ text }: { text: string }) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -22,7 +24,7 @@ function CopyButton({ text }: { text: string }) {
       type="button"
       onClick={handleCopy}
       className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-      aria-label="Copy"
+      aria-label={t("onboarding.cli.copy")}
     >
       {copied ? (
         <Check className="h-3.5 w-3.5 text-success" />
@@ -59,16 +61,23 @@ function Step({ n, label, cmd }: { n: number; label: string; cmd: string }) {
  * thread env vars through React.
  */
 export function CliInstallInstructions() {
+  const { t } = useI18n();
   return (
     <Card className="w-full">
       <CardContent className="space-y-4 pt-4">
         <p className="text-xs leading-[1.55] text-muted-foreground">
-          You&apos;ll need an AI coding tool on this machine (Claude
-          Code, Codex, Cursor, …) for the daemon to do real work. Also
-          works on servers and remote dev boxes.
+          {t("onboarding.cli.requirement")}
         </p>
-        <Step n={1} label="Install the Multica CLI" cmd={INSTALL_CMD} />
-        <Step n={2} label="Start the daemon" cmd={SETUP_CMD} />
+        <Step
+          n={1}
+          label={t("onboarding.cli.step1Label")}
+          cmd={INSTALL_CMD}
+        />
+        <Step
+          n={2}
+          label={t("onboarding.cli.step2Label")}
+          cmd={SETUP_CMD}
+        />
       </CardContent>
     </Card>
   );

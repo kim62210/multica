@@ -17,6 +17,7 @@ import type {
   UseCase,
 } from "@multica/core/onboarding";
 import { DragStrip } from "@multica/views/platform";
+import { useI18n } from "@multica/views/i18n";
 import { StepHeader } from "../components/step-header";
 import { OptionCard, OtherOptionCard } from "../components/option-card";
 
@@ -41,6 +42,7 @@ export function StepQuestionnaire({
   onSubmit: (answers: QuestionnaireAnswers) => void | Promise<void>;
   onBack?: () => void;
 }) {
+  const { t } = useI18n();
   const [answers, setAnswers] = useState<QuestionnaireAnswers>(initial);
   const [submitting, setSubmitting] = useState(false);
   const mainRef = useRef<HTMLElement>(null);
@@ -110,7 +112,7 @@ export function StepQuestionnaire({
               className="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              Back
+              {t("onboarding.common.back")}
             </button>
           ) : (
             <span aria-hidden className="w-0" />
@@ -134,27 +136,27 @@ export function StepQuestionnaire({
         >
           <div className="mx-auto w-full max-w-[620px] px-6 py-10 sm:px-10 md:px-14 lg:px-0 lg:py-14">
             <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-              Before we start
+              {t("onboarding.questionnaire.eyebrow")}
             </div>
             <h1 className="text-balance font-serif text-[36px] font-medium leading-[1.1] tracking-tight text-foreground">
-              Three questions to get to know you.
+              {t("onboarding.questionnaire.title")}
             </h1>
 
             <div className="mt-10 flex flex-col gap-7">
               <QuestionBlock
                 num={1}
-                question="Who will use this workspace?"
-                ariaLabel="Who will use this workspace?"
+                question={t("onboarding.questionnaire.q1.question")}
+                ariaLabel={t("onboarding.questionnaire.q1.question")}
               >
                 <OptionCard
                   selected={answers.team_size === "solo"}
                   onSelect={() => setTeamSize("solo")}
-                  label="Just me"
+                  label={t("onboarding.questionnaire.q1.solo")}
                 />
                 <OptionCard
                   selected={answers.team_size === "team"}
                   onSelect={() => setTeamSize("team")}
-                  label="My team (2–10 people)"
+                  label={t("onboarding.questionnaire.q1.team")}
                 />
                 <OtherOptionCard
                   selected={answers.team_size === "other"}
@@ -163,34 +165,34 @@ export function StepQuestionnaire({
                   onOtherChange={(v) =>
                     setAnswers((a) => ({ ...a, team_size_other: v }))
                   }
-                  placeholder="e.g. a small community I help run"
+                  placeholder={t("onboarding.questionnaire.q1.otherPlaceholder")}
                 />
               </QuestionBlock>
 
               <QuestionBlock
                 num={2}
-                question="What best describes you?"
-                ariaLabel="What best describes you?"
+                question={t("onboarding.questionnaire.q2.question")}
+                ariaLabel={t("onboarding.questionnaire.q2.question")}
               >
                 <OptionCard
                   selected={answers.role === "developer"}
                   onSelect={() => setRole("developer")}
-                  label="Software developer"
+                  label={t("onboarding.questionnaire.q2.developer")}
                 />
                 <OptionCard
                   selected={answers.role === "product_lead"}
                   onSelect={() => setRole("product_lead")}
-                  label="Product or project lead"
+                  label={t("onboarding.questionnaire.q2.productLead")}
                 />
                 <OptionCard
                   selected={answers.role === "writer"}
                   onSelect={() => setRole("writer")}
-                  label="Writer or content creator"
+                  label={t("onboarding.questionnaire.q2.writer")}
                 />
                 <OptionCard
                   selected={answers.role === "founder"}
                   onSelect={() => setRole("founder")}
-                  label="Founder or operator"
+                  label={t("onboarding.questionnaire.q2.founder")}
                 />
                 <OtherOptionCard
                   selected={answers.role === "other"}
@@ -199,34 +201,34 @@ export function StepQuestionnaire({
                   onOtherChange={(v) =>
                     setAnswers((a) => ({ ...a, role_other: v }))
                   }
-                  placeholder="e.g. researcher, designer, ops lead"
+                  placeholder={t("onboarding.questionnaire.q2.otherPlaceholder")}
                 />
               </QuestionBlock>
 
               <QuestionBlock
                 num={3}
-                question="What do you want to do with Multica?"
-                ariaLabel="What do you want to do with Multica?"
+                question={t("onboarding.questionnaire.q3.question")}
+                ariaLabel={t("onboarding.questionnaire.q3.question")}
               >
                 <OptionCard
                   selected={answers.use_case === "coding"}
                   onSelect={() => setUseCase("coding")}
-                  label="Write and ship code"
+                  label={t("onboarding.questionnaire.q3.coding")}
                 />
                 <OptionCard
                   selected={answers.use_case === "planning"}
                   onSelect={() => setUseCase("planning")}
-                  label="Plan and manage projects"
+                  label={t("onboarding.questionnaire.q3.planning")}
                 />
                 <OptionCard
                   selected={answers.use_case === "writing_research"}
                   onSelect={() => setUseCase("writing_research")}
-                  label="Research or write"
+                  label={t("onboarding.questionnaire.q3.writingResearch")}
                 />
                 <OptionCard
                   selected={answers.use_case === "explore"}
                   onSelect={() => setUseCase("explore")}
-                  label="I'm just exploring for now"
+                  label={t("onboarding.questionnaire.q3.explore")}
                 />
                 <OtherOptionCard
                   selected={answers.use_case === "other"}
@@ -235,7 +237,7 @@ export function StepQuestionnaire({
                   onOtherChange={(v) =>
                     setAnswers((a) => ({ ...a, use_case_other: v }))
                   }
-                  placeholder="e.g. automate my weekly reports"
+                  placeholder={t("onboarding.questionnaire.q3.otherPlaceholder")}
                 />
               </QuestionBlock>
             </div>
@@ -248,7 +250,10 @@ export function StepQuestionnaire({
             aria-live="polite"
             className="text-xs tabular-nums text-muted-foreground"
           >
-            {answeredCount} of 3 answered
+            {t("onboarding.questionnaire.answered", {
+              count: answeredCount,
+              total: 3,
+            })}
           </span>
           <Button
             size="lg"
@@ -256,7 +261,7 @@ export function StepQuestionnaire({
             onClick={submit}
           >
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            Continue
+            {t("onboarding.common.continue")}
             <ArrowRight className="h-4 w-4" />
           </Button>
         </footer>
@@ -300,31 +305,32 @@ function QuestionBlock({
 }
 
 function WhyWeAsk() {
+  const { t } = useI18n();
   return (
     <div className="flex max-w-[380px] flex-col gap-8">
       <section className="flex flex-col gap-4">
         <div className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          Why three questions
+          {t("onboarding.questionnaire.whyTitle")}
         </div>
         <h2 className="font-serif text-[22px] font-medium leading-[1.25] tracking-tight text-foreground">
-          So you land running.
+          {t("onboarding.questionnaire.whyHeadline")}
         </h2>
       </section>
 
       <section className="flex flex-col gap-4">
         <div className="text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
-          What you get
+          {t("onboarding.questionnaire.getTitle")}
         </div>
         <div className="flex flex-col gap-4">
           <UnlockItem
             icon={<PenLine className="h-4 w-4" />}
-            title="A starter project, tailored"
-            body="A Getting Started checklist shaped by your answers."
+            title={t("onboarding.questionnaire.unlock1Title")}
+            body={t("onboarding.questionnaire.unlock1Body")}
           />
           <UnlockItem
             icon={<Sparkles className="h-4 w-4" />}
-            title="A head start with agents"
-            body="Connect a runtime and we'll pick a template for your role — plus write its first task."
+            title={t("onboarding.questionnaire.unlock2Title")}
+            body={t("onboarding.questionnaire.unlock2Body")}
           />
         </div>
       </section>
