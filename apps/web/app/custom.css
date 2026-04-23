@@ -186,17 +186,16 @@
     border-right: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-/* Main content canvas: gently translucent so the body pattern *hints*
- * through without dominating. ~12% pass-through keeps readability
- * while proving to the eye that the backdrop is alive. Glass cards
- * on top still render with their own heavier blur. */
+/* Main content canvas: roughly half-and-half — pattern reads clearly
+ * in the dashboard backdrop without swallowing the content. Fine-tune
+ * the 55% (background weight) up/down by ~10 points to taste. */
 .dark [data-slot="sidebar-inset"],
 .dark [data-slot="sidebar-wrapper"] {
-    background-color: color-mix(in oklab, var(--background) 88%, transparent);
+    background-color: color-mix(in oklab, var(--background) 55%, transparent);
 }
 
 .dark main {
-    background-color: color-mix(in oklab, var(--background) 88%, transparent);
+    background-color: color-mix(in oklab, var(--background) 55%, transparent);
 }
 
 /* Inputs: heavy frost + glowing focus */
@@ -233,6 +232,13 @@
 
 @keyframes shimmer-spin {
     to { --shimmer-angle: 360deg; }
+}
+
+/* CSS Motion Path: travelling spark keeps uniform LINEAR velocity around
+ * the element perimeter regardless of aspect ratio. 100% offset-distance
+ * = 1 full lap. Use for shimmer-trace animation on every button edge. */
+@keyframes shimmer-trace {
+    to { offset-distance: 100%; }
 }
 
 /* Every interactive surface that should carry the hover laser ring.
@@ -282,32 +288,29 @@
 )::before {
     content: "";
     position: absolute;
-    inset: 0;
-    /* Match the exact shape of the parent — inherit its border-radius so
-     * the ring traces rounded, pill, or square shapes identically. */
-    border-radius: inherit;
-    box-sizing: border-box;
-    padding: 1.5px;
-    /* Single travelling highlight with a long trailing falloff — one head
-     * around the full perimeter per cycle. Keep duration slow enough
-     * (see animation-duration below) that even long edges don't whip. */
-    background: conic-gradient(
-        from var(--shimmer-angle),
-        transparent 0deg,
-        color-mix(in oklab, var(--primary) 95%, white) 20deg,
-        color-mix(in oklab, var(--primary) 70%, transparent) 60deg,
-        color-mix(in oklab, var(--primary) 35%, transparent) 110deg,
-        transparent 160deg,
-        transparent 360deg
+    top: 0;
+    left: 0;
+    /* A small spark drawn once and then swept along the element perimeter
+     * via CSS Motion Path. This makes linear velocity constant along both
+     * short and long edges — the previous conic-gradient had uniform ANGULAR
+     * velocity, so wide rectangles felt whippy along the long top/bottom. */
+    width: 32px;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in oklab, var(--primary) 35%, transparent) 15%,
+        color-mix(in oklab, var(--primary) 98%, white) 50%,
+        color-mix(in oklab, var(--primary) 35%, transparent) 85%,
+        transparent 100%
     );
-    -webkit-mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-    mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
+    filter:
+        blur(1px)
+        drop-shadow(0 0 6px color-mix(in oklab, var(--primary) 85%, transparent));
+    offset-path: inset(0 round 0.44rem);
+    offset-distance: 0%;
+    offset-rotate: auto;
     opacity: 0;
     transition: opacity 180ms ease-out;
     pointer-events: none;
@@ -335,7 +338,7 @@
     a[href]
 ):is(:hover, :focus-visible, [data-state="open"], [data-popup-open], [data-active="true"])::before {
     opacity: 1;
-    animation: shimmer-spin 5s linear infinite;
+    animation: shimmer-trace 2.2s linear infinite;
 }
 
 /* Respect reduced motion preference — freeze spin, keep the static red edge */
