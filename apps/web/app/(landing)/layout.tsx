@@ -20,17 +20,17 @@ const jsonLd = {
   "@graph": [
     {
       "@type": "Organization",
-      name: "Multica",
-      url: "https://www.multica.ai",
-      sameAs: ["https://github.com/multica-ai/multica"],
+      name: "Brian's MultiCarrier",
+      url: "https://workspace.brian-dev.cloud",
+      sameAs: ["https://github.com/kim62210"],
     },
     {
       "@type": "SoftwareApplication",
-      name: "Multica",
+      name: "Brian's MultiCarrier",
       applicationCategory: "ProjectManagement",
       operatingSystem: "Web",
       description:
-        "Open-source project management platform that turns coding agents into real teammates.",
+        "Personal project management workspace for human + agent teams.",
       offers: {
         "@type": "Offer",
         price: "0",

@@ -432,9 +432,9 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                 <DropdownMenuTrigger
                   render={
                     <SidebarMenuButton>
-                      <WorkspaceAvatar name={workspace?.name ?? "M"} size="sm" />
+                      <WorkspaceAvatar name={workspace?.name ?? "B"} size="sm" />
                       <span className="flex-1 truncate font-medium">
-                        {workspace?.name ?? "Multica"}
+                        {workspace?.name ?? "Brian's MultiCarrier"}
                       </span>
                       <ChevronDown className="size-3 text-muted-foreground" />
                     </SidebarMenuButton>

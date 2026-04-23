@@ -35,11 +35,11 @@ export function LandingHeader({
           />
           <span
             className={cn(
-              "text-[18px] font-semibold tracking-[0.04em] lowercase sm:text-[20px]",
+              "text-[16px] font-semibold tracking-[0.02em] sm:text-[18px]",
               variant === "dark" ? "text-white/92" : "text-[#0a0d12]",
             )}
           >
-            multica
+            {"Brian's MultiCarrier"}
           </span>
         </Link>
 

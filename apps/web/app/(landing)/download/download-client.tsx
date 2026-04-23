@@ -17,7 +17,7 @@ import type { LatestRelease } from "@/features/landing/utils/github-release";
 import { captureDownloadPageViewed } from "@multica/core/analytics";
 
 const ALL_RELEASES_URL =
-  "https://github.com/multica-ai/multica/releases";
+  "https://github.com/kim62210";
 
 export function DownloadClient({ release }: { release: LatestRelease }) {
   const [detected, setDetected] = useState<DetectResult | null>(null);
@@ -107,7 +107,7 @@ function VersionInfoFooter({
               ·
             </span>
             <Link
-              href={releaseHtmlUrl}
+              href="https://github.com/kim62210"
               className="underline decoration-[#0a0d12]/30 underline-offset-4 hover:text-[#0a0d12] hover:decoration-[#0a0d12]/70"
               target="_blank"
               rel="noreferrer"

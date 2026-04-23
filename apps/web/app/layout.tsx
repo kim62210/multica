@@ -68,8 +68,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "\ube0c\ub77c\uc774\uc5b8 \uc791\uc5c5\uc2e4",
-    template: "%s | \ube0c\ub77c\uc774\uc5b8 \uc791\uc5c5\uc2e4",
+    default: "Brian's MultiCarrier",
+    template: "%s | Brian's MultiCarrier",
   },
   description:
     "\uc0ac\ub78c\uacfc \uc5d0\uc774\uc804\ud2b8\uac00 \ud568\uaed8 \uc77c\ud558\ub294 \ub098\ub9cc\uc758 \uc791\uc5c5\uc2e4.",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "\ube0c\ub77c\uc774\uc5b8 \uc791\uc5c5\uc2e4",
+    siteName: "Brian's MultiCarrier",
     locale: "ko_KR",
   },
   robots: {
