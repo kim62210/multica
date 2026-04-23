@@ -18,6 +18,7 @@ import { useWorkspaceId } from "@multica/core/hooks";
 import { skillListOptions, workspaceKeys } from "@multica/core/workspace/queries";
 import { runtimeListOptions, runtimeLocalSkillsOptions } from "@multica/core/runtimes";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useI18n } from "@multica/views/i18n";
 import { RuntimeLocalSkillImportDialog } from "../../../skills/components/runtime-local-skill-import-dialog";
 import { RuntimeLocalSkillRow } from "../../../skills/components/runtime-local-skill-row";
 
@@ -26,6 +27,7 @@ export function SkillsTab({
 }: {
   agent: Agent;
 }) {
+  const { t } = useI18n();
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
   const { data: workspaceSkills = [] } = useQuery(skillListOptions(wsId));
@@ -53,7 +55,7 @@ export function SkillsTab({
       await api.setAgentSkills(agent.id, { skill_ids: newIds });
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to add skill");
+      toast.error(e instanceof Error ? e.message : t("agents.skills.addFailed"));
     } finally {
       setSaving(false);
       setShowPicker(false);
@@ -67,7 +69,7 @@ export function SkillsTab({
       await api.setAgentSkills(agent.id, { skill_ids: newIds });
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to remove skill");
+      toast.error(e instanceof Error ? e.message : t("agents.skills.removeFailed"));
     } finally {
       setSaving(false);
     }
@@ -77,9 +79,9 @@ export function SkillsTab({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold">Skills</h3>
+          <h3 className="text-sm font-semibold">{t("agents.skills.title")}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Workspace skills assigned to this agent.
+            {t("agents.skills.description")}
           </p>
         </div>
         <Button
@@ -89,23 +91,23 @@ export function SkillsTab({
           disabled={saving || availableSkills.length === 0}
         >
           <Plus className="h-3 w-3" />
-          Add Skill
+          {t("agents.skills.add")}
         </Button>
       </div>
 
       <div className="flex items-start gap-2 rounded-md border border-info/20 bg-info/5 px-3 py-2.5">
         <Info className="h-3.5 w-3.5 shrink-0 text-info mt-0.5" />
         <p className="text-xs text-muted-foreground">
-          Local runtime skills are always available automatically. Importing creates a workspace copy that your team can edit and reuse.
+          {t("agents.skills.infoWorkspace")}
         </p>
       </div>
 
       {agent.skills.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
           <FileText className="h-8 w-8 text-muted-foreground/40" />
-          <p className="mt-3 text-sm text-muted-foreground">No skills assigned</p>
+          <p className="mt-3 text-sm text-muted-foreground">{t("agents.skills.emptyTitle")}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Add workspace skills to share team knowledge with this agent. Local skills are already used automatically.
+            {t("agents.skills.emptyHint")}
           </p>
           {availableSkills.length > 0 && (
             <Button
@@ -115,7 +117,7 @@ export function SkillsTab({
               disabled={saving}
             >
               <Plus className="h-3 w-3" />
-              Add Skill
+              {t("agents.skills.add")}
             </Button>
           )}
         </div>
@@ -154,20 +156,20 @@ export function SkillsTab({
       {agent.runtime_mode === "local" && (
         <div className="space-y-3 rounded-lg border p-4">
           <div>
-            <h4 className="text-sm font-semibold">Local Runtime Skills</h4>
+            <h4 className="text-sm font-semibold">{t("agents.skills.localTitle")}</h4>
             <p className="mt-0.5 text-xs text-muted-foreground">
-              Browse local skills discovered from this runtime. They are read-only here until imported into the workspace.
+              {t("agents.skills.localDescription")}
             </p>
           </div>
 
           {!runtime ? (
             <div className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-              Runtime details are unavailable for this agent right now.
+              {t("agents.skills.runtimeUnavailable")}
             </div>
           ) : runtime.status !== "online" ? (
             <div className="flex items-start gap-2 rounded-md bg-warning/10 px-3 py-2 text-xs text-muted-foreground">
               <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
-              Runtime must be online to browse local skills.
+              {t("agents.skills.runtimeMustBeOnline")}
             </div>
           ) : localSkillsQuery.isLoading ? (
             <div className="space-y-2">
@@ -183,17 +185,17 @@ export function SkillsTab({
               <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               {localSkillsQuery.error instanceof Error
                 ? localSkillsQuery.error.message
-                : "Failed to load runtime local skills"}
+                : t("agents.skills.localLoadFailed")}
             </div>
           ) : !localSkillsQuery.data?.supported ? (
             <div className="rounded-md bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-              This runtime provider does not expose local skill inventory yet.
+              {t("agents.skills.localUnsupported")}
             </div>
           ) : (localSkillsQuery.data.skills ?? []).length === 0 ? (
             <div className="rounded-md border border-dashed px-4 py-8 text-center">
-              <p className="text-sm text-muted-foreground">No local skills found</p>
+              <p className="text-sm text-muted-foreground">{t("agents.skills.localEmptyTitle")}</p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Add local skills to this runtime first, then import the ones you want to share.
+                {t("agents.skills.localEmptyHint")}
               </p>
             </div>
           ) : (
@@ -212,7 +214,7 @@ export function SkillsTab({
                       }}
                     >
                       <Download className="h-3 w-3" />
-                      Import to Workspace
+                      {t("agents.skills.import")}
                     </Button>
                   }
                 />
@@ -227,9 +229,9 @@ export function SkillsTab({
         <Dialog open onOpenChange={(v) => { if (!v) setShowPicker(false); }}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-sm">Add Skill</DialogTitle>
+              <DialogTitle className="text-sm">{t("agents.skills.pickerTitle")}</DialogTitle>
               <DialogDescription className="text-xs">
-                Select a skill to assign to this agent.
+                {t("agents.skills.pickerDescription")}
               </DialogDescription>
             </DialogHeader>
             <div className="max-h-64 overflow-y-auto space-y-1">
@@ -253,13 +255,13 @@ export function SkillsTab({
               ))}
               {availableSkills.length === 0 && (
                 <p className="py-6 text-center text-xs text-muted-foreground">
-                  All workspace skills are already assigned.
+                  {t("agents.skills.pickerAllAssigned")}
                 </p>
               )}
             </div>
             <DialogFooter>
               <Button variant="ghost" onClick={() => setShowPicker(false)}>
-                Cancel
+                {t("agents.skills.pickerCancel")}
               </Button>
             </DialogFooter>
           </DialogContent>
