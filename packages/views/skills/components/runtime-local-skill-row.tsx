@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { FileText } from "lucide-react";
 import type { RuntimeLocalSkillSummary } from "@multica/core/types";
 import { Badge } from "@multica/ui/components/ui/badge";
+import { useI18n } from "../../i18n";
 
 export function RuntimeLocalSkillRow({
   skill,
@@ -16,6 +17,7 @@ export function RuntimeLocalSkillRow({
   onSelect?: () => void;
   action?: ReactNode;
 }) {
+  const { t } = useI18n();
   const content = (
     <>
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted">
@@ -35,7 +37,9 @@ export function RuntimeLocalSkillRow({
       </div>
       {action ?? (
         <Badge variant="outline">
-          {skill.file_count} file{skill.file_count === 1 ? "" : "s"}
+          {skill.file_count === 1
+            ? t("skills.list.fileCount.one", { count: skill.file_count })
+            : t("skills.list.fileCount.other", { count: skill.file_count })}
         </Badge>
       )}
     </>
