@@ -67,33 +67,24 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.multica.ai"),
   title: {
-    default: "Multica — Project Management for Human + Agent Teams",
-    template: "%s | Multica",
+    default: "\ube0c\ub77c\uc774\uc5b8 \uc791\uc5c5\uc2e4",
+    template: "%s | \ube0c\ub77c\uc774\uc5b8 \uc791\uc5c5\uc2e4",
   },
   description:
-    "Open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills.",
+    "\uc0ac\ub78c\uacfc \uc5d0\uc774\uc804\ud2b8\uac00 \ud568\uaed8 \uc77c\ud558\ub294 \ub098\ub9cc\uc758 \uc791\uc5c5\uc2e4.",
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    shortcut: ["/favicon.svg"],
+    icon: [{ url: "/icon.jpeg", type: "image/jpeg" }],
+    shortcut: ["/icon.jpeg"],
   },
   openGraph: {
     type: "website",
-    siteName: "Multica",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@multica_hq",
-    creator: "@multica_hq",
-  },
-  alternates: {
-    canonical: "/",
+    siteName: "\ube0c\ub77c\uc774\uc5b8 \uc791\uc5c5\uc2e4",
+    locale: "ko_KR",
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
   },
 };
 

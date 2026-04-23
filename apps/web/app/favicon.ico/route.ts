@@ -1,3 +1,3 @@
 export function GET(request: Request) {
-  return Response.redirect(new URL("/favicon.svg", request.url), 308);
+  return Response.redirect(new URL("/icon.jpeg", request.url), 308);
 }
