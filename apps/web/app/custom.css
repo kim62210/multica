@@ -56,10 +56,10 @@
     --background: oklch(0.12 0.018 15);
     --foreground: oklch(0.97 0.005 15);
 
-    /* Glass surfaces — alpha < 1 so pattern bleeds through */
-    --card: oklch(0.20 0.02 15 / 0.62);
+    /* Glass surfaces — deep translucency (Apple-style frost) */
+    --card: oklch(0.18 0.02 15 / 0.18);
     --card-foreground: oklch(0.97 0.005 15);
-    --popover: oklch(0.18 0.02 15 / 0.88);
+    --popover: oklch(0.16 0.02 15 / 0.38);
     --popover-foreground: oklch(0.97 0.005 15);
 
     /* 🔴 Red primary + brand (main accent) */
@@ -68,26 +68,26 @@
     --brand: oklch(0.68 0.24 22);
     --brand-foreground: oklch(0.99 0 0);
 
-    --secondary: oklch(0.22 0.02 15 / 0.55);
+    --secondary: oklch(0.22 0.02 15 / 0.18);
     --secondary-foreground: oklch(0.97 0.005 15);
-    --muted: oklch(0.22 0.015 15 / 0.45);
-    --muted-foreground: oklch(0.72 0.03 15);
-    --accent: oklch(0.32 0.14 22 / 0.55);
+    --muted: oklch(0.22 0.015 15 / 0.14);
+    --muted-foreground: oklch(0.75 0.03 15);
+    --accent: oklch(0.32 0.14 22 / 0.22);
     --accent-foreground: oklch(0.99 0 0);
 
     /* Red-tinted glass border + ring */
-    --border: oklch(0.75 0.18 22 / 0.18);
-    --input: oklch(0.28 0.03 15 / 0.5);
+    --border: oklch(0.8 0.18 22 / 0.24);
+    --input: oklch(0.28 0.03 15 / 0.16);
     --ring: oklch(0.68 0.24 22 / 0.6);
 
-    /* Sidebar: heavier glass with red glow */
-    --sidebar: oklch(0.14 0.02 15 / 0.72);
+    /* Sidebar: deep frosted glass with red halo */
+    --sidebar: oklch(0.13 0.02 15 / 0.24);
     --sidebar-foreground: oklch(0.97 0.005 15);
     --sidebar-primary: oklch(0.68 0.24 22);
     --sidebar-primary-foreground: oklch(0.99 0 0);
-    --sidebar-accent: oklch(0.32 0.14 22 / 0.5);
+    --sidebar-accent: oklch(0.32 0.14 22 / 0.22);
     --sidebar-accent-foreground: oklch(0.99 0 0);
-    --sidebar-border: oklch(0.75 0.18 22 / 0.15);
+    --sidebar-border: oklch(0.8 0.18 22 / 0.2);
     --sidebar-ring: oklch(0.68 0.24 22 / 0.55);
 
     /* Intents kept distinct from red primary */
@@ -165,7 +165,7 @@
     z-index: 0;
 }
 
-/* Frosted glass on key shadcn surfaces */
+/* Frosted glass on key shadcn surfaces — heavy blur carries readability at very low alpha */
 .dark [data-slot="card"],
 .dark [data-slot="popover-content"],
 .dark [data-slot="dropdown-menu-content"],
@@ -175,23 +175,23 @@
 .dark [data-slot="command"],
 .dark [data-slot="hover-card-content"],
 .dark [data-slot="tooltip-content"] {
-    backdrop-filter: blur(18px) saturate(140%);
-    -webkit-backdrop-filter: blur(18px) saturate(140%);
-    border-color: color-mix(in oklab, var(--primary) 22%, transparent);
+    backdrop-filter: blur(44px) saturate(180%);
+    -webkit-backdrop-filter: blur(44px) saturate(180%);
+    border-color: color-mix(in oklab, var(--primary) 38%, transparent);
 }
 
 .dark [data-sidebar="sidebar"] {
-    backdrop-filter: blur(22px) saturate(160%);
-    -webkit-backdrop-filter: blur(22px) saturate(160%);
-    border-right: 1px solid color-mix(in oklab, var(--primary) 18%, transparent);
+    backdrop-filter: blur(52px) saturate(200%);
+    -webkit-backdrop-filter: blur(52px) saturate(200%);
+    border-right: 1px solid color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-/* Inputs: frosted + glowing focus */
+/* Inputs: heavy frost + glowing focus */
 .dark input,
 .dark textarea {
-    background-color: color-mix(in oklab, var(--background) 55%, transparent);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background-color: color-mix(in oklab, var(--background) 28%, transparent);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
 }
 
 .dark input:focus-visible,
