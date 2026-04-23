@@ -18,7 +18,7 @@ import { memberListOptions, agentListOptions } from "@multica/core/workspace/que
 import { useWorkspaceId } from "@multica/core/hooks";
 import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
 import { useActorName } from "@multica/core/workspace/hooks";
-import { PROJECT_STATUS_ORDER, PROJECT_STATUS_CONFIG, PROJECT_PRIORITY_ORDER, PROJECT_PRIORITY_CONFIG } from "@multica/core/projects/config";
+import { PROJECT_STATUS_ORDER, PROJECT_STATUS_CONFIG, PROJECT_PRIORITY_ORDER } from "@multica/core/projects/config";
 import { BOARD_STATUSES } from "@multica/core/issues/config";
 import { createIssueViewStore } from "@multica/core/issues/stores/view-store";
 import { ViewStoreProvider, useViewStore } from "@multica/core/issues/stores/view-store-context";
@@ -281,7 +281,6 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
 
   const issueMetrics = getProjectIssueMetrics(project);
   const statusCfg = PROJECT_STATUS_CONFIG[project.status];
-  const priorityCfg = PROJECT_PRIORITY_CONFIG[project.priority];
 
   const sidebarContent = (
     <div className="space-y-5">
