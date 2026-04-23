@@ -18,6 +18,7 @@ import { IssueChip } from "../../issues/components/issue-chip";
 import { ProjectChip } from "../../projects/components/project-chip";
 import { AppLink, useNavigation } from "../../navigation";
 import { useWorkspacePaths } from "@multica/core/paths";
+import { useI18n } from "@multica/views/i18n";
 
 /**
  * Format a derived ContextAnchor as the markdown prefix prepended to the
@@ -119,6 +120,7 @@ export function useRouteAnchorCandidate(wsId: string): {
  */
 export function ContextAnchorButton() {
   const wsId = useWorkspaceId();
+  const { t } = useI18n();
   const { candidate, isResolving } = useRouteAnchorCandidate(wsId);
   const focusMode = useChatStore((s) => s.focusMode);
   const setFocusMode = useChatStore((s) => s.setFocusMode);
@@ -128,12 +130,12 @@ export function ContextAnchorButton() {
   const isBright = focusMode && hasAnchor;
 
   const tooltipText = isDisabled
-    ? "Nothing to share with Multica on this page"
+    ? t("chat.anchor.nothing")
     : focusMode && candidate
       ? candidate.type === "issue"
-        ? `Multica knows you're viewing ${candidate.label} · Click to turn off`
-        : `Multica knows you're viewing project "${candidate.label}" · Click to turn off`
-      : "Let Multica know what you're viewing";
+        ? t("chat.anchor.viewingIssueOff", { label: candidate.label })
+        : t("chat.anchor.viewingProjectOff", { label: candidate.label })
+      : t("chat.anchor.letKnow");
 
   return (
     <Tooltip>
@@ -146,7 +148,7 @@ export function ContextAnchorButton() {
             onClick={() => setFocusMode(!focusMode)}
             disabled={isDisabled}
             aria-label={
-              focusMode ? "Stop sharing current page" : "Share current page with Multica"
+              focusMode ? t("chat.anchor.stopSharing") : t("chat.anchor.shareCurrent")
             }
             aria-pressed={focusMode}
           />
@@ -166,6 +168,7 @@ export function ContextAnchorButton() {
  */
 export function ContextAnchorCard() {
   const wsId = useWorkspaceId();
+  const { t } = useI18n();
   const paths = useWorkspacePaths();
   const { candidate } = useRouteAnchorCandidate(wsId);
   const focusMode = useChatStore((s) => s.focusMode);
@@ -179,8 +182,13 @@ export function ContextAnchorCard() {
 
   const tooltipText =
     candidate.type === "issue"
-      ? `Multica knows you're viewing ${candidate.label}${candidate.subtitle ? ` — ${candidate.subtitle}` : ""}`
-      : `Multica knows you're viewing project "${candidate.label}"`;
+      ? candidate.subtitle
+        ? t("chat.anchor.viewingIssueWithSubtitle", {
+            label: candidate.label,
+            subtitle: candidate.subtitle,
+          })
+        : t("chat.anchor.viewingIssue", { label: candidate.label })
+      : t("chat.anchor.viewingProject", { label: candidate.label });
 
   // Same pattern as IssueMentionCard: wrap the pure chip in an AppLink and
   // layer cursor + hover affordance onto the chip. Makes the anchor feel

@@ -40,6 +40,7 @@ import {
 import { ChatResizeHandles } from "./chat-resize-handles";
 import { useChatResize } from "./use-chat-resize";
 import { createLogger } from "@multica/core/logger";
+import { useI18n } from "@multica/views/i18n";
 import type { Agent, ChatMessage, ChatSession } from "@multica/core/types";
 
 const uiLogger = createLogger("chat.ui");
@@ -47,6 +48,7 @@ const apiLogger = createLogger("chat.api");
 
 export function ChatWindow() {
   const wsId = useWorkspaceId();
+  const { t } = useI18n();
   const isOpen = useChatStore((s) => s.isOpen);
   const activeSessionId = useChatStore((s) => s.activeSessionId);
   const selectedAgentId = useChatStore((s) => s.selectedAgentId);
@@ -349,7 +351,7 @@ export function ChatWindow() {
             >
               <Plus />
             </TooltipTrigger>
-            <TooltipContent side="top">New chat</TooltipContent>
+            <TooltipContent side="top">{t("chat.window.newChat")}</TooltipContent>
           </Tooltip>
           <SessionDropdown
             sessions={sessions}
@@ -375,7 +377,7 @@ export function ChatWindow() {
               {isAtMax ? <Minimize2 /> : <Maximize2 />}
             </TooltipTrigger>
             <TooltipContent side="top">
-              {isAtMax ? "Restore" : "Expand"}
+              {isAtMax ? t("chat.window.restore") : t("chat.window.expand")}
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -391,7 +393,7 @@ export function ChatWindow() {
             >
               <Minus />
             </TooltipTrigger>
-            <TooltipContent side="top">Minimize</TooltipContent>
+            <TooltipContent side="top">{t("chat.window.minimize")}</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -450,6 +452,7 @@ function AgentDropdown({
   userId: string | undefined;
   onSelect: (agent: Agent) => void;
 }) {
+  const { t } = useI18n();
   // Split into the user's own agents and everyone else so the menu groups
   // them — matches the old AgentSelector layout.
   const { mine, others } = useMemo(() => {
@@ -463,7 +466,7 @@ function AgentDropdown({
   }, [agents, userId]);
 
   if (!activeAgent) {
-    return <span className="text-xs text-muted-foreground">No agents</span>;
+    return <span className="text-xs text-muted-foreground">{t("chat.window.noAgents")}</span>;
   }
 
   return (
@@ -476,7 +479,7 @@ function AgentDropdown({
       <DropdownMenuContent align="start" side="top" className="max-h-80 w-auto max-w-64">
         {mine.length > 0 && (
           <DropdownMenuGroup>
-            <DropdownMenuLabel>My agents</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("chat.window.myAgents")}</DropdownMenuLabel>
             {mine.map((agent) => (
               <AgentMenuItem
                 key={agent.id}
@@ -490,7 +493,7 @@ function AgentDropdown({
         {mine.length > 0 && others.length > 0 && <DropdownMenuSeparator />}
         {others.length > 0 && (
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Others</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("chat.window.others")}</DropdownMenuLabel>
             {others.map((agent) => (
               <AgentMenuItem
                 key={agent.id}
@@ -545,9 +548,10 @@ function SessionDropdown({
   activeSessionId: string | null;
   onSelectSession: (session: ChatSession) => void;
 }) {
+  const { t } = useI18n();
   const agentById = useMemo(() => new Map(agents.map((a) => [a.id, a])), [agents]);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
-  const title = activeSession?.title?.trim() || "New chat";
+  const title = activeSession?.title?.trim() || t("chat.window.newChat");
   const triggerAgent = activeSession ? agentById.get(activeSession.agent_id) ?? null : null;
 
   return (
@@ -560,7 +564,7 @@ function SessionDropdown({
       <DropdownMenuContent align="start" className="max-h-80 w-auto min-w-56 max-w-80">
         {sessions.length === 0 ? (
           <div className="px-2 py-1.5 text-xs text-muted-foreground">
-            No previous chats
+            {t("chat.window.noPreviousChats")}
           </div>
         ) : (
           sessions.map((session) => {
@@ -578,7 +582,7 @@ function SessionDropdown({
                   <span className="size-6 shrink-0" />
                 )}
                 <span className="truncate flex-1 text-sm">
-                  {session.title?.trim() || "New chat"}
+                  {session.title?.trim() || t("chat.window.newChat")}
                 </span>
                 {session.has_unread && (
                   <span className="size-1.5 shrink-0 rounded-full bg-brand" />
@@ -609,10 +613,10 @@ function AgentAvatarSmall({ agent }: { agent: Agent }) {
  * immediately — ChatGPT-style — because the point is showing users what
  * this chat is for: operating on the workspace, not open-ended Q&A.
  */
-const STARTER_PROMPTS: { icon: string; text: string }[] = [
-  { icon: "📋", text: "List my open tasks by priority" },
-  { icon: "📝", text: "Summarize what I did today" },
-  { icon: "💡", text: "Plan what to work on next" },
+const STARTER_PROMPT_KEYS: { icon: string; key: string }[] = [
+  { icon: "📋", key: "chat.starter.listTasks" },
+  { icon: "📝", key: "chat.starter.summarizeToday" },
+  { icon: "💡", key: "chat.starter.planNext" },
 ];
 
 function EmptyState({
@@ -622,26 +626,30 @@ function EmptyState({
   agentName?: string;
   onPickPrompt: (text: string) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-5 px-6 py-8">
       <div className="text-center space-y-1">
         <h3 className="text-base font-semibold">
-          {agentName ? `Hi, I'm ${agentName}` : "Welcome to Multica"}
+          {agentName ? t("chat.empty.greet", { name: agentName }) : t("chat.empty.welcome")}
         </h3>
-        <p className="text-sm text-muted-foreground">Try asking</p>
+        <p className="text-sm text-muted-foreground">{t("chat.empty.tryAsking")}</p>
       </div>
       <div className="w-full max-w-xs space-y-2">
-        {STARTER_PROMPTS.map((prompt) => (
-          <button
-            key={prompt.text}
-            type="button"
-            onClick={() => onPickPrompt(prompt.text)}
-            className="w-full rounded-lg border border-border bg-card px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-accent hover:border-brand/40"
-          >
-            <span className="mr-2">{prompt.icon}</span>
-            {prompt.text}
-          </button>
-        ))}
+        {STARTER_PROMPT_KEYS.map((prompt) => {
+          const text = t(prompt.key);
+          return (
+            <button
+              key={prompt.key}
+              type="button"
+              onClick={() => onPickPrompt(text)}
+              className="w-full rounded-lg border border-border bg-card px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-accent hover:border-brand/40"
+            >
+              <span className="mr-2">{prompt.icon}</span>
+              {text}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

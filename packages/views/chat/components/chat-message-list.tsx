@@ -14,6 +14,7 @@ import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
 import { useAutoScroll } from "@multica/ui/hooks/use-auto-scroll";
 import { taskMessagesOptions } from "@multica/core/chat/queries";
 import { Markdown } from "@multica/views/common/markdown";
+import { useI18n } from "@multica/views/i18n";
 import type { ChatMessage, TaskMessagePayload } from "@multica/core/types";
 import type { ChatTimelineItem } from "@multica/core/chat";
 
@@ -236,9 +237,13 @@ function ToolGroupCollapsible({
   items: ChatTimelineItem[];
   defaultOpen?: boolean;
 }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(defaultOpen ?? false);
   const toolCount = items.filter((i) => i.type === "tool_use").length;
-  const label = `${toolCount} ${toolCount === 1 ? "tool" : "tools"}`;
+  const label = t(
+    toolCount === 1 ? "chat.timeline.toolsOne" : "chat.timeline.toolsMany",
+    { count: toolCount },
+  );
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
@@ -333,6 +338,7 @@ function ToolCallRow({ item }: { item: ChatTimelineItem }) {
 }
 
 function ToolResultRow({ item }: { item: ChatTimelineItem }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const output = item.output ?? "";
   if (!output) return null;
@@ -346,7 +352,9 @@ function ToolResultRow({ item }: { item: ChatTimelineItem }) {
           className={cn("h-3 w-3 shrink-0 text-muted-foreground transition-transform mt-0.5", open && "rotate-90")}
         />
         <span className="text-muted-foreground/70 truncate">
-          {item.tool ? `${item.tool} result: ` : "result: "}{preview}
+          {item.tool
+            ? t("chat.timeline.toolResultPrefix", { tool: item.tool })
+            : t("chat.timeline.resultPrefix")}{preview}
         </span>
       </CollapsibleTrigger>
       <CollapsibleContent>
