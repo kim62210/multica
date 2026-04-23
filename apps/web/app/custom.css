@@ -122,14 +122,14 @@
 .dark body {
     background:
         radial-gradient(ellipse 65% 55% at 10% -8%,
-            oklch(0.45 0.25 295 / 0.35),
+            oklch(0.45 0.25 295 / 0.16),
             transparent 55%),
         radial-gradient(ellipse 55% 50% at 115% 108%,
-            oklch(0.38 0.22 220 / 0.3),
+            oklch(0.38 0.22 220 / 0.14),
             transparent 55%),
         linear-gradient(180deg,
-            oklch(0.08 0.015 15 / 0.32),
-            oklch(0.10 0.018 15 / 0.42)),
+            oklch(0.08 0.015 15 / 0.12),
+            oklch(0.10 0.018 15 / 0.2)),
         url("/pattern.png") center center / cover no-repeat,
         oklch(0.06 0.008 15);
     background-attachment: fixed;
@@ -159,8 +159,8 @@
     inset: 0;
     background:
         radial-gradient(ellipse at center,
-            transparent 35%,
-            oklch(0.05 0.01 270 / 0.35) 90%);
+            transparent 45%,
+            oklch(0.05 0.01 15 / 0.2) 95%);
     pointer-events: none;
     z-index: 0;
 }
@@ -275,12 +275,20 @@
     border-radius: inherit;
     box-sizing: border-box;
     padding: 1.5px;
+    /* Two opposing highlights + a long trailing falloff so a rectangular
+     * button doesn't appear to "race" across its long edges. Arc covers
+     * ~140° per spot which evens out the perceived velocity between the
+     * short and long sides. */
     background: conic-gradient(
         from var(--shimmer-angle),
         transparent 0deg,
-        color-mix(in oklab, var(--primary) 92%, white) 18deg,
-        color-mix(in oklab, var(--primary) 72%, transparent) 42deg,
-        transparent 78deg,
+        color-mix(in oklab, var(--primary) 90%, white) 25deg,
+        color-mix(in oklab, var(--primary) 70%, transparent) 70deg,
+        transparent 140deg,
+        transparent 180deg,
+        color-mix(in oklab, var(--primary) 75%, transparent) 205deg,
+        color-mix(in oklab, var(--primary) 55%, transparent) 250deg,
+        transparent 320deg,
         transparent 360deg
     );
     -webkit-mask:
@@ -318,7 +326,7 @@
     a[href]
 ):is(:hover, :focus-visible, [data-state="open"], [data-popup-open], [data-active="true"])::before {
     opacity: 1;
-    animation: shimmer-spin 2s linear infinite;
+    animation: shimmer-spin 3.6s linear infinite;
 }
 
 /* Respect reduced motion preference — freeze spin, keep the static red edge */
