@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import type { RuntimeUsage } from "@multica/core/types";
+import { useI18n } from "../../../i18n";
 import { formatTokens } from "../../utils";
 
 const HEATMAP_WEEKS = 13;
 const CELL_SIZE = 11;
 const CELL_GAP = 2;
-const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 
 function getHeatmapColor(level: number): string {
   const colors = [
@@ -19,6 +19,8 @@ function getHeatmapColor(level: number): string {
 }
 
 export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
+  const { t } = useI18n();
+  const dayLabels = ["", t("runtimes.heatmap.mon"), "", t("runtimes.heatmap.wed"), "", t("runtimes.heatmap.fri"), ""];
   const { cells, monthLabels } = useMemo(() => {
     const dateTokens = new Map<string, number>();
     for (const u of usage) {
@@ -96,7 +98,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
 
   return (
     <div className="rounded-lg border p-4">
-      <h4 className="text-xs font-medium text-muted-foreground mb-3">Activity</h4>
+      <h4 className="text-xs font-medium text-muted-foreground mb-3">{t("runtimes.heatmap.title")}</h4>
       <div className="overflow-x-auto">
         <svg width={svgWidth} height={svgHeight} className="block">
           {monthLabels.map((m) => (
@@ -110,7 +112,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
               {m.label}
             </text>
           ))}
-          {DAY_LABELS.map((label, i) =>
+          {dayLabels.map((label, i) =>
             label ? (
               <text
                 key={i}
@@ -137,8 +139,8 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
               <title>
                 {c.date}:{" "}
                 {c.tokens > 0
-                  ? formatTokens(c.tokens) + " tokens"
-                  : "No activity"}
+                  ? formatTokens(c.tokens) + t("runtimes.heatmap.tokensSuffix")
+                  : t("runtimes.heatmap.noActivity")}
               </title>
             </rect>
           ))}
@@ -146,7 +148,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
       </div>
       {/* Legend */}
       <div className="mt-2 flex items-center justify-end gap-1 text-[10px] text-muted-foreground">
-        <span>Less</span>
+        <span>{t("runtimes.heatmap.less")}</span>
         {[0, 1, 2, 3, 4].map((level) => (
           <div
             key={level}
@@ -154,7 +156,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
             style={{ backgroundColor: getHeatmapColor(level) }}
           />
         ))}
-        <span>More</span>
+        <span>{t("runtimes.heatmap.more")}</span>
       </div>
     </div>
   );

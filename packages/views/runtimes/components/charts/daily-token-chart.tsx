@@ -11,12 +11,9 @@ import {
   ChartContainer,
   type ChartConfig,
 } from "@multica/ui/components/ui/chart";
+import { useI18n } from "../../../i18n";
 import type { DailyTokenData } from "../../utils";
 import { formatTokens } from "../../utils";
-
-const tokenChartConfig = {
-  total: { label: "Total", color: "hsl(var(--chart-1))" },
-} satisfies ChartConfig;
 
 type DailyTokenRow = DailyTokenData & { total: number };
 
@@ -47,19 +44,27 @@ function TokenTooltipContent({
   active,
   payload,
   label,
+  labels,
 }: {
   active?: boolean;
   payload?: Array<{ payload: DailyTokenRow }>;
   label?: string;
+  labels: {
+    input: string;
+    output: string;
+    cacheRead: string;
+    cacheWrite: string;
+    total: string;
+  };
 }) {
   if (!active || !payload?.length) return null;
   const row = payload[0]!.payload;
 
   const items = [
-    { label: "Input", value: row.input },
-    { label: "Output", value: row.output },
-    { label: "Cache Read", value: row.cacheRead },
-    { label: "Cache Write", value: row.cacheWrite },
+    { label: labels.input, value: row.input },
+    { label: labels.output, value: row.output },
+    { label: labels.cacheRead, value: row.cacheRead },
+    { label: labels.cacheWrite, value: row.cacheWrite },
   ];
 
   return (
@@ -78,7 +83,7 @@ function TokenTooltipContent({
           </div>
         ))}
         <div className="flex items-center justify-between gap-6 border-t pt-1 mt-0.5 font-medium">
-          <span>Total</span>
+          <span>{labels.total}</span>
           <span className="font-mono tabular-nums">
             {formatTokens(row.total)}
           </span>
@@ -89,6 +94,17 @@ function TokenTooltipContent({
 }
 
 export function DailyTokenChart({ data }: { data: DailyTokenData[] }) {
+  const { t } = useI18n();
+  const tokenChartConfig = {
+    total: { label: t("runtimes.charts.total"), color: "hsl(var(--chart-1))" },
+  } satisfies ChartConfig;
+  const tooltipLabels = {
+    input: t("runtimes.usage.input"),
+    output: t("runtimes.usage.output"),
+    cacheRead: t("runtimes.usage.cacheRead"),
+    cacheWrite: t("runtimes.usage.cacheWrite"),
+    total: t("runtimes.charts.total"),
+  };
   const chartData = useMemo<DailyTokenRow[]>(
     () =>
       data.map((d) => ({
@@ -103,7 +119,7 @@ export function DailyTokenChart({ data }: { data: DailyTokenData[] }) {
   return (
     <div className="rounded-lg border p-4">
       <h4 className="text-xs font-medium text-muted-foreground mb-3">
-        Daily Token Usage
+        {t("runtimes.charts.dailyTokens")}
       </h4>
       <ChartContainer
         config={tokenChartConfig}
@@ -131,7 +147,7 @@ export function DailyTokenChart({ data }: { data: DailyTokenData[] }) {
             domain={[0, yMax]}
             ticks={ticks}
           />
-          <Tooltip content={<TokenTooltipContent />} />
+          <Tooltip content={<TokenTooltipContent labels={tooltipLabels} />} />
           <Area
             type="monotone"
             dataKey="total"

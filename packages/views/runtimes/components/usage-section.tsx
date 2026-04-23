@@ -5,6 +5,7 @@ import { BarChart3 } from "lucide-react";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import type { RuntimeUsage } from "@multica/core/types";
 import { api } from "@multica/core/api";
+import { useI18n } from "../../i18n";
 import { formatTokens, estimateCost, aggregateByDate } from "../utils";
 import { TokenCard } from "./shared";
 import {
@@ -24,6 +25,7 @@ const TIME_RANGES = [
 type TimeRange = (typeof TIME_RANGES)[number]["days"];
 
 export function UsageSection({ runtimeId }: { runtimeId: string }) {
+  const { t } = useI18n();
   const [usage, setUsage] = useState<RuntimeUsage[]>([]);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState<TimeRange>(30);
@@ -62,7 +64,7 @@ export function UsageSection({ runtimeId }: { runtimeId: string }) {
     return (
       <div className="flex flex-col items-center rounded-lg border border-dashed py-6">
         <BarChart3 className="h-5 w-5 text-muted-foreground/40" />
-        <p className="mt-2 text-xs text-muted-foreground">No usage data yet</p>
+        <p className="mt-2 text-xs text-muted-foreground">{t("runtimes.usage.empty")}</p>
       </div>
     );
   }
@@ -116,16 +118,16 @@ export function UsageSection({ runtimeId }: { runtimeId: string }) {
 
       {/* Summary cards */}
       <div className="grid grid-cols-4 gap-3">
-        <TokenCard label="Input" value={formatTokens(totals.input)} />
-        <TokenCard label="Output" value={formatTokens(totals.output)} />
-        <TokenCard label="Cache Read" value={formatTokens(totals.cacheRead)} />
-        <TokenCard label="Cache Write" value={formatTokens(totals.cacheWrite)} />
+        <TokenCard label={t("runtimes.usage.input")} value={formatTokens(totals.input)} />
+        <TokenCard label={t("runtimes.usage.output")} value={formatTokens(totals.output)} />
+        <TokenCard label={t("runtimes.usage.cacheRead")} value={formatTokens(totals.cacheRead)} />
+        <TokenCard label={t("runtimes.usage.cacheWrite")} value={formatTokens(totals.cacheWrite)} />
       </div>
 
       {totals.cost > 0 && (
         <div className="rounded-lg border bg-muted/30 px-3 py-2">
           <span className="text-xs text-muted-foreground">
-            Estimated cost ({days}d):{" "}
+            {t("runtimes.usage.estimatedCost", { days })}
           </span>
           <span className="text-sm font-semibold">
             ${totals.cost.toFixed(2)}
@@ -150,12 +152,12 @@ export function UsageSection({ runtimeId }: { runtimeId: string }) {
       {/* Daily breakdown table */}
       <div className="rounded-lg border">
         <div className="grid grid-cols-[100px_1fr_80px_80px_80px_80px] gap-2 border-b px-3 py-2 text-xs font-medium text-muted-foreground">
-          <div>Date</div>
-          <div>Model</div>
-          <div className="text-right">Input</div>
-          <div className="text-right">Output</div>
-          <div className="text-right">Cache R</div>
-          <div className="text-right">Cache W</div>
+          <div>{t("runtimes.usage.tableDate")}</div>
+          <div>{t("runtimes.usage.tableModel")}</div>
+          <div className="text-right">{t("runtimes.usage.input")}</div>
+          <div className="text-right">{t("runtimes.usage.output")}</div>
+          <div className="text-right">{t("runtimes.usage.tableCacheR")}</div>
+          <div className="text-right">{t("runtimes.usage.tableCacheW")}</div>
         </div>
         <div className="max-h-64 overflow-y-auto divide-y">
           {[...byDate.entries()].map(([date, rows]) =>
