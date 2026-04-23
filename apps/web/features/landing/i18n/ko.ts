@@ -226,7 +226,7 @@ export function createKoDict(allowSignup: boolean): LandingDict {
         links: [
           { label: "\uae30\ub2a5", href: "#features" },
           { label: "\uc791\ub3d9 \ubc29\uc2dd", href: "#how-it-works" },
-          { label: "\ubcc0\uacbd \uc774\ub825", href: "https://github.com/kim62210" },
+          { label: "GitHub", href: "https://github.com/kim62210" },
         ],
       },
       resources: {
